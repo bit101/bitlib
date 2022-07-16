@@ -45,12 +45,6 @@ func (p *Polygon) makeSides() {
 	}
 }
 
-func (p *Polygon) Draw(context *blgg.Context) {
-	for _, s := range p.Sides {
-		s.Stroke(context)
-	}
-}
-
 func (p *Polygon) Centroid() *Point {
 	vSum := NewPoint(0, 0)
 	for _, v := range p.Vertices {
@@ -100,4 +94,22 @@ func (p *Polygon) DrawVertices(context *blgg.Context, r float64) {
 	for _, v := range p.Vertices {
 		v.Fill(context, r)
 	}
+}
+
+func (p *Polygon) Stroke(context *blgg.Context) {
+	context.MoveTo(p.Vertices[0].X, p.Vertices[0].Y)
+	for i := 1; i < len(p.Vertices); i++ {
+		context.LineTo(p.Vertices[i].X, p.Vertices[i].Y)
+	}
+	context.LineTo(p.Vertices[0].X, p.Vertices[0].Y)
+	context.Stroke()
+}
+
+func (p *Polygon) Fill(context *blgg.Context) {
+	context.MoveTo(p.Vertices[0].X, p.Vertices[0].Y)
+	for i := 1; i < len(p.Vertices); i++ {
+		context.LineTo(p.Vertices[i].X, p.Vertices[i].Y)
+	}
+	context.LineTo(p.Vertices[0].X, p.Vertices[0].Y)
+	context.Fill()
 }
