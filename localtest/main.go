@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/bit101/bitlib/geom"
 	"github.com/bit101/blgg/blgg"
 	"github.com/bit101/blgg/render"
@@ -30,16 +32,11 @@ func renderFrame(context *blgg.Context, width, height, percent float64) {
 
 	context.SetLineWidth(0.5)
 
-	vertices := []*geom.Point{}
-	vertices = append(vertices, geom.NewPoint(100, 100))
-	vertices = append(vertices, geom.NewPoint(200, 150))
-	vertices = append(vertices, geom.NewPoint(250, 200))
-	vertices = append(vertices, geom.NewPoint(120, 300))
-
-	p := geom.NewPolygon(vertices)
+	p := geom.NewPolygonFromCoords(100, 100, 200, 120, 190, 200, 80, 300)
 	p.Draw(context)
 	p.DrawVertices(context, 2)
-
 	p.Centroid().Fill(context, 2)
 
+	q := geom.NewPolygonFromCoords(100, 100, 200, 120, 190, 200, 80, 300)
+	fmt.Printf("p.Equals(q) = %+v\n", p.Equals(q))
 }
