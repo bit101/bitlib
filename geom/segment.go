@@ -19,6 +19,10 @@ func LerpSegment(t float64, s0 *Segment, s1 *Segment) *Segment {
 	return NewSegment(LerpPoint(t, s0.Start, s1.Start), LerpPoint(t, s0.End, s1.End))
 }
 
+func RandomSegment(x, y, w, h float64) *Segment {
+	return NewSegment(RandomPoint(x, y, w, h), RandomPoint(x, y, w, h))
+}
+
 func (s *Segment) DirectionVector() *Vector {
 	return NewVectorBetween(s.Start, s.End)
 }

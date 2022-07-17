@@ -4,6 +4,7 @@ import (
 	"math"
 
 	"github.com/bit101/blgg/blgg"
+	"github.com/bit101/blgg/random"
 )
 
 type Circle struct {
@@ -20,6 +21,10 @@ func NewCircle(center *Point, radius float64) *Circle {
 
 func NewCircleXY(x, y, r float64) *Circle {
 	return NewCircle(NewPoint(x, y), r)
+}
+
+func RandomCircle(x, y, w, h, minRadius, maxRadius float64) *Circle {
+	return NewCircle(RandomPoint(x, y, w, h), random.FloatRange(minRadius, maxRadius))
 }
 
 func NewCircleFromPoints(a, b, c *Point) *Circle {

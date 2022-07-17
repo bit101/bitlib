@@ -27,14 +27,16 @@ func main() {
 
 func renderFrame(context *blgg.Context, width, height, percent float64) {
 	context.BlackOnWhite()
+	context.Translate(400, 400)
+	r := geom.NewRectXY(0, 0, 100, 50)
+	r.Stroke(context)
 
-	context.SetLineWidth(0.5)
+	a := geom.NewAffineTransform(1, 1, 0, 0, 1, 0)
+	r1 := a.ApplyToRect(r)
+	r1.Stroke(context)
 
-	a := geom.NewPoint(200, 200)
-	b := geom.NewPoint(250, 220)
-	c := geom.NewPoint(100, 230)
+	b := a.Inverse()
+	r2 := b.ApplyToRect(r)
+	r2.Stroke(context)
 
-	circle := geom.NewCircleFromPoints(a, b, c)
-	circle.Stroke(context)
-	circle.ToPolygon(10).DrawVertices(context, 2)
 }
