@@ -2,8 +2,6 @@ package geom
 
 import (
 	"math"
-
-	"github.com/bit101/blgg/blgg"
 )
 
 type Vector struct {
@@ -119,15 +117,3 @@ func (v *Vector) Perpendicular() *Vector {
 	return NewVector(-v.V, v.U)
 }
 
-func (v *Vector) StrokeVectorAt(context *blgg.Context, p *Point, pointSize float64) {
-	context.DrawArrow(p.X, p.Y, p.X+v.U, p.Y+v.V, pointSize)
-	context.Stroke()
-}
-
-func StrokeVectorChain(context *blgg.Context, vectors []*Vector, p *Point, pointSize float64) {
-	for _, v := range vectors {
-		v.StrokeVectorAt(context, p, pointSize)
-		p = p.Displaced(v, 1)
-	}
-	context.Stroke()
-}

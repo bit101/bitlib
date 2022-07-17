@@ -1,7 +1,5 @@
 package geom
 
-import "github.com/bit101/blgg/blgg"
-
 type Segment struct {
 	Start *Point
 	End   *Point
@@ -111,10 +109,4 @@ func (s *Segment) RotateAround(p *Point, radians float64) {
 
 func (s *Segment) Bisector() *Line {
 	return NewLine(s.Middle(), s.NormalVersor())
-}
-
-func (s *Segment) Stroke(context *blgg.Context) {
-	context.MoveTo(s.Start.X, s.Start.Y)
-	context.LineTo(s.End.X, s.End.Y)
-	context.Stroke()
 }

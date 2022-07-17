@@ -3,8 +3,7 @@ package geom
 import (
 	"math"
 
-	"github.com/bit101/blgg/blgg"
-	"github.com/bit101/blgg/random"
+	"github.com/bit101/bitlib/random"
 )
 
 type Circle struct {
@@ -67,12 +66,4 @@ func (c *Circle) Equals(d *Circle) bool {
 		return c.Radius == d.Radius
 	}
 	return false
-}
-
-func (c *Circle) Fill(context *blgg.Context) {
-	context.FillCircle(c.Center.X, c.Center.Y, c.Radius)
-}
-
-func (c *Circle) Stroke(context *blgg.Context) {
-	context.StrokeCircle(c.Center.X, c.Center.Y, c.Radius)
 }

@@ -3,8 +3,6 @@ package geom
 import (
 	"log"
 	"math"
-
-	"github.com/bit101/blgg/blgg"
 )
 
 type Polygon struct {
@@ -57,7 +55,7 @@ func (p *Polygon) Centroid() *Point {
 	return vSum
 }
 
-func (p *Polygon) Contains(point *Point, context *blgg.Context) bool {
+func (p *Polygon) Contains(point *Point) bool {
 	vecs := []*Vector{}
 	for _, v := range p.Vertices {
 		if v.Equals(point) {
@@ -88,28 +86,4 @@ func (p *Polygon) Equals(q *Polygon) bool {
 		}
 	}
 	return true
-}
-
-func (p *Polygon) DrawVertices(context *blgg.Context, r float64) {
-	for _, v := range p.Vertices {
-		v.Fill(context, r)
-	}
-}
-
-func (p *Polygon) Stroke(context *blgg.Context) {
-	context.MoveTo(p.Vertices[0].X, p.Vertices[0].Y)
-	for i := 1; i < len(p.Vertices); i++ {
-		context.LineTo(p.Vertices[i].X, p.Vertices[i].Y)
-	}
-	context.LineTo(p.Vertices[0].X, p.Vertices[0].Y)
-	context.Stroke()
-}
-
-func (p *Polygon) Fill(context *blgg.Context) {
-	context.MoveTo(p.Vertices[0].X, p.Vertices[0].Y)
-	for i := 1; i < len(p.Vertices); i++ {
-		context.LineTo(p.Vertices[i].X, p.Vertices[i].Y)
-	}
-	context.LineTo(p.Vertices[0].X, p.Vertices[0].Y)
-	context.Fill()
 }

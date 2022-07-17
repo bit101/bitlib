@@ -1,6 +1,6 @@
 package geom
 
-import "github.com/bit101/blgg/random"
+import "github.com/bit101/bitlib/random"
 
 type Size struct {
 	Width, Height float64

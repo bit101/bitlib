@@ -3,9 +3,8 @@ package geom
 import (
 	"math"
 
-	"github.com/bit101/blgg/blgg"
-	"github.com/bit101/blgg/blmath"
-	"github.com/bit101/blgg/random"
+	"github.com/bit101/bitlib/blmath"
+	"github.com/bit101/bitlib/random"
 )
 
 type Point struct {
@@ -116,10 +115,3 @@ func (p *Point) Equals(q *Point) bool {
 	return AreClose(p.X, q.X) && AreClose(p.Y, q.Y)
 }
 
-func (p *Point) Fill(context *blgg.Context, radius float64) {
-	context.FillCircle(p.X, p.Y, radius)
-}
-
-func (p *Point) Stroke(context *blgg.Context, radius float64) {
-	context.StrokeCircle(p.X, p.Y, radius)
-}

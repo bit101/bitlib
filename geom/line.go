@@ -1,11 +1,5 @@
 package geom
 
-import (
-	"math"
-
-	"github.com/bit101/blgg/blgg"
-)
-
 type Line struct {
 	Base      *Point
 	Direction *Vector
@@ -48,14 +42,4 @@ func (l *Line) IntersectionWith(m *Line) *Point {
 	delta := NewVectorBetween(l.Base, m.Base)
 	t1 := (delta.U*d2.V - delta.V*d2.U) / crossProd
 	return l.Base.Displaced(d1, t1)
-}
-
-func (l *Line) Stroke(context *blgg.Context, length float64) {
-	context.Push()
-	context.Translate(l.Base.X, l.Base.Y)
-	context.Rotate(math.Atan2(l.Direction.V, l.Direction.U))
-	context.MoveTo(-length/2, 0)
-	context.LineTo(length/2, 0)
-	context.Pop()
-	context.Stroke()
 }

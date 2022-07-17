@@ -3,8 +3,6 @@ package geom
 import (
 	"log"
 	"math"
-
-	"github.com/bit101/blgg/blgg"
 )
 
 type Rect struct {
@@ -123,10 +121,3 @@ func (r *Rect) Equals(s *Rect) bool {
 	return r.Origin.Equals(s.Origin) && r.Size.Equals(s.Size)
 }
 
-func (r *Rect) Stroke(context *blgg.Context) {
-	context.StrokeRectangle(r.Origin.X, r.Origin.Y, r.Size.Width, r.Size.Height)
-}
-
-func (r *Rect) Fill(context *blgg.Context) {
-	context.FillRectangle(r.Origin.X, r.Origin.Y, r.Size.Width, r.Size.Height)
-}
