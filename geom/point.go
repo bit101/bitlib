@@ -1,6 +1,8 @@
 package geom
 
 import (
+	"math"
+
 	"github.com/bit101/bitlib/blmath"
 	"github.com/bit101/bitlib/random"
 )
@@ -24,9 +26,15 @@ func LerpPoint(t float64, p0, p1 *Point) *Point {
 	)
 }
 
-func RandomPoint(x, y, w, h float64) *Point {
+func RandomPointInRect(x, y, w, h float64) *Point {
 	return NewPoint(
 		random.FloatRange(x, x+w),
 		random.FloatRange(y, y+h),
 	)
+}
+
+func RandomPointInCircle(x, y, r float64) *Point {
+	angle := random.FloatRange(0, math.Pi*2)
+	radius := random.FloatRange(0, r)
+	return NewPoint(x+math.Cos(angle)*radius, y+math.Sin(angle)*radius)
 }
