@@ -26,6 +26,7 @@ func PointInPolygon(x, y float64, points []float64) bool {
 // circle / circle
 // rect / circle
 
+// x0, y0 -> x1, y1 = segment. x2, y2 -> x3, y3 = line
 func SegmentOnLine(x0, y0, x1, y1, x2, y2, x3, y3 float64) (float64, float64, error) {
 	v0 := VectorBetween(x0, y0, x1, y1)
 	v1 := VectorBetween(x2, y2, x3, y3)
@@ -35,9 +36,8 @@ func SegmentOnLine(x0, y0, x1, y1, x2, y2, x3, y3 float64) (float64, float64, er
 	}
 	delta := VectorBetween(x0, y0, x2, y2)
 	t1 := (delta.U*v1.V - delta.V*v1.U) / crossProd
-	t2 := (delta.U*v0.V - delta.V*v0.U) / crossProd
 
-	if tIsValid(t1) && tIsValid(t2) {
+	if tIsValid(t1) {
 		return blmath.Lerp(t1, x0, x1), blmath.Lerp(t1, y0, y1), nil
 	}
 	return 0, 0, errors.New("segments do not intersect")
