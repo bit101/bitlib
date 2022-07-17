@@ -1,5 +1,7 @@
 package geom
 
+import "math"
+
 type AffineTransform struct {
 	sx  float64
 	sy  float64
@@ -22,6 +24,25 @@ func NewAffineTransform(sx, sy, tx, ty, shx, shy float64) *AffineTransform {
 
 func NewAffineTransformIdentity() *AffineTransform {
 	return NewAffineTransform(1, 1, 0, 0, 0, 0)
+}
+
+func MakeScaleTransform(sx, sy float64, center *Point) *AffineTransform {
+	return NewAffineTransform(
+		sx, sy,
+		center.X*(1.0-sx), center.Y*(1.0-sy),
+		0, 0,
+	)
+}
+
+func MakeRotationTransform(radians float64, center *Point) *AffineTransform {
+	cos := math.Cos(radians)
+	sin := math.Sin(radians)
+	oneMinusCos := 1.0 - cos
+	return NewAffineTransform(
+		cos, cos,
+		center.X*oneMinusCos+center.Y*sin, center.Y*oneMinusCos-center.X*sin,
+		-sin, sin,
+	)
 }
 
 func (a *AffineTransform) ApplyToPoint(p *Point) *Point {
@@ -50,7 +71,7 @@ func (a *AffineTransform) ApplyToRect(r *Rect) *Polygon {
 	return a.ApplyToPolygon(r.ToPolygon())
 }
 
-func (a *AffineTransform) ApplyToCircl(c *Circle, divs int) *Polygon {
+func (a *AffineTransform) ApplyToCircle(c *Circle, divs int) *Polygon {
 	return a.ApplyToPolygon(c.ToPolygon(divs))
 }
 

@@ -28,15 +28,11 @@ func main() {
 func renderFrame(context *blgg.Context, width, height, percent float64) {
 	context.BlackOnWhite()
 	context.Translate(400, 400)
-	r := geom.NewRectXY(0, 0, 100, 50)
+	r := geom.NewRectXY(100, 100, 100, 50)
 	r.Stroke(context)
 
-	a := geom.NewAffineTransform(1, 1, 0, 0, 1, 0)
-	r1 := a.ApplyToRect(r)
-	r1.Stroke(context)
-
-	b := a.Inverse()
-	r2 := b.ApplyToRect(r)
+	a := geom.MakeRotationTransform(0.5, geom.NewPoint(0, 150))
+	r2 := a.ApplyToRect(r)
 	r2.Stroke(context)
 
 }
