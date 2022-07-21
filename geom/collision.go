@@ -151,35 +151,22 @@ func PointDistanceToLine(px, py, x0, y0, x1, y1 float64) float64 {
 }
 
 func CircleToLine(x0, y0, x1, y1, cx, cy, r float64) (*Point, *Point, bool) {
-	// https://mathworld.wolfram.com/Circle-LineIntersection.html
-	xA := x0 - cx
-	yA := y0 - cy
-	xB := x1 - cx
-	yB := y1 - cy
+	p := NewPoint(cx, cy)
+	l := NewLine(x0, y0, x1, y1)
+	lp := l.ClosestPoint(p)
+	d := lp.Distance(p)
 
-	dx := xB - xA
-	dy := yB - yA
-	dr := dx*dx + dy*dy
-	r2 := r * r
-	dot := x0*y1 - x1*y0
-	dot2 := dot * dot
-	sign := 1.0
-	if dy < 0 {
-		sign = -1.0
+	// circle/line intersection forms a chord
+	if d < r {
+		// height of chord
+		h := r - d
+		// half length of chord
+		c := math.Sqrt(math.Pow(r-h, 2) - r*r)
+		angle := math.Atan2(y1-y0, x1-x0)
+		cos := math.Cos(angle)
+		sin := math.Sin(angle)
+		// two points on line c distance away from closest point.
+		return NewPoint(lp.X+cos*c, lp.Y+sin*c), NewPoint(lp.X-cos*c, lp.Y-sin*c), true
 	}
-
-	m := math.Sqrt(r2*dr - dot2)
-	n := dot * dy
-	p := -dot * dx
-	q := sign * dx * m
-	s := math.Abs(dy) * m
-
-	xA = cx + (n+q)/dr
-	yA = cy + (p+s)/dr
-
-	xB = cx + (n-q)/dr
-	yB = cy + (p-s)/dr
-
-	hit := r2*dr-dot2 >= 0
-	return NewPoint(xA, yA), NewPoint(xB, yB), hit
+	return nil, nil, false
 }

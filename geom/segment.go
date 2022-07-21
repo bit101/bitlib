@@ -50,3 +50,7 @@ func (s *Segment) ClosestPoint(p *Point) *Point {
 	t := vs / s.Length()
 	return NewPoint(blmath.Lerp(t, s.X0, s.X1), blmath.Lerp(t, s.Y0, s.Y1))
 }
+
+func (s *Segment) DistanceTo(p *Point) float64 {
+	return s.ClosestPoint(p).Distance(p)
+}

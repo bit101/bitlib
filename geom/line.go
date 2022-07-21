@@ -34,3 +34,7 @@ func (l *Line) ClosestPoint(p *Point) *Point {
 	t := vs / math.Hypot(l.X1-l.X0, l.Y1-l.Y0)
 	return NewPoint(blmath.Lerp(t, l.X0, l.X1), blmath.Lerp(t, l.Y0, l.Y1))
 }
+
+func (l *Line) DistanceTo(p *Point) float64 {
+	return l.ClosestPoint(p).Distance(p)
+}
