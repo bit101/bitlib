@@ -33,3 +33,14 @@ func (v *Vector) AngleValueTo(w *Vector) float64 {
 func tIsValid(t float64) bool {
 	return t >= 0.0 && t <= 1.0
 }
+
+func (v *Vector) Normalized() *Vector {
+	return v.Scaled(1.0 / v.Norm())
+}
+
+func (v *Vector) Scaled(factor float64) *Vector {
+	return &Vector{U: v.U * factor, V: v.V * factor}
+}
+func (v *Vector) Project(w *Vector) float64 {
+	return v.DotProduct(w.Normalized())
+}

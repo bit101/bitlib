@@ -12,10 +12,10 @@ func NewLine(x0, y0, x1, y1 float64) *Line {
 	}
 }
 
-func (l *Line) HitSegment(s *Segment) (float64, float64, error) {
+func (l *Line) HitSegment(s *Segment) (float64, float64, bool) {
 	return SegmentOnSegment(s.X0, s.Y0, s.X1, s.Y1, l.X0, l.Y0, l.X1, l.Y1)
 }
 
-func (l *Line) HitLine(m *Line) (float64, float64, error) {
+func (l *Line) HitLine(m *Line) (float64, float64, bool) {
 	return SegmentOnLine(l.X0, l.Y0, l.X1, l.Y1, m.X0, m.Y0, m.X1, m.Y1)
 }

@@ -19,3 +19,19 @@ func (c *Circle) Hit(d *Circle) bool {
 func (c *Circle) Contains(p *Point) bool {
 	return PointInCircle(p.X, p.X, c.X, c.Y, c.Radius)
 }
+
+// func TangentPointToCircle(point *Point, circle *Circle, anticlockwise bool) *Point {
+// 	d := math.Hypot(c.X-point.X, c.Y-point.Y)
+// 	dir := -1.0
+// 	if anticlockwise {
+// 		dir = 1.0
+// 	}
+// 	angle := math.Cos(-circle.Radius/d) * dir
+// 	baseAngle := math.Atan2(circle.Center.Y-point.Y, circle.Center.X-point.X)
+// 	totalAngle := baseAngle + angle
+
+// 	return &Point{
+// 		circle.Center.X + math.Cos(totalAngle)*circle.Radius,
+// 		circle.Center.Y + math.Sin(totalAngle)*circle.Radius,
+// 	}
+// }
