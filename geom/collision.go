@@ -161,7 +161,7 @@ func CircleToLine(x0, y0, x1, y1, cx, cy, r float64) (*Point, *Point, bool) {
 		// height of chord
 		h := r - d
 		// half length of chord
-		c := math.Sqrt(math.Pow(r-h, 2) - r*r)
+		c := math.Sqrt(r*r - math.Pow(r-h, 2))
 		angle := math.Atan2(y1-y0, x1-x0)
 		cos := math.Cos(angle)
 		sin := math.Sin(angle)
