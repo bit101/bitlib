@@ -1,5 +1,11 @@
 package geom
 
+import (
+	"math"
+
+	"github.com/bit101/bitlib/blmath"
+)
+
 // A Line is the same as a segment, but we'll keep them separate for collision purposes
 type Line Segment
 
@@ -18,4 +24,13 @@ func (l *Line) HitSegment(s *Segment) (float64, float64, bool) {
 
 func (l *Line) HitLine(m *Line) (float64, float64, bool) {
 	return SegmentOnLine(l.X0, l.Y0, l.X1, l.Y1, m.X0, m.Y0, m.X1, m.Y1)
+}
+
+func (l *Line) ClosestPoint(p *Point) *Point {
+
+	v := VectorBetween(l.X0, l.Y0, p.X, p.Y)
+	d := VectorBetween(l.X0, l.Y0, l.X1, l.Y1).Normalized()
+	vs := v.Project(d)
+	t := vs / math.Hypot(l.X1-l.X0, l.Y1-l.Y0)
+	return NewPoint(blmath.Lerp(t, l.X0, l.X1), blmath.Lerp(t, l.Y0, l.Y1))
 }
