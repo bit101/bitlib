@@ -1,23 +1,32 @@
 package params
 
 import (
-	"bufio"
+	"encoding/json"
 	"log"
 	"os"
 	"strconv"
-	"strings"
 )
 
 type Param struct {
-	min   float64
-	max   float64
-	value float64
+	Min   float64 `json:"min"`
+	Max   float64 `json:"max"`
+	Value float64 `json:"value"`
 }
 
-var params = make(map[string]*Param)
+type Params map[string]*Param
+
+var params Params
 
 func addParam(name string, min, max, value float64) {
 	params[name] = &Param{min, max, value}
+}
+
+func LoadParams(filepath string) {
+	bytes, err := os.ReadFile(filepath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	json.Unmarshal(bytes, &params)
 }
 
 func GetValue(name string) float64 {
@@ -25,7 +34,7 @@ func GetValue(name string) float64 {
 	if !ok {
 		log.Fatalf("No param named %s\n", name)
 	}
-	return param.value
+	return param.Value
 }
 
 func GetMin(name string) float64 {
@@ -33,7 +42,7 @@ func GetMin(name string) float64 {
 	if !ok {
 		log.Fatalf("No param named %s\n", name)
 	}
-	return param.min
+	return param.Min
 }
 
 func GetMax(name string) float64 {
@@ -41,7 +50,7 @@ func GetMax(name string) float64 {
 	if !ok {
 		log.Fatalf("No param named %s\n", name)
 	}
-	return param.max
+	return param.Max
 }
 
 func GetParam(name string) (float64, float64, float64) {
@@ -49,25 +58,7 @@ func GetParam(name string) (float64, float64, float64) {
 	if !ok {
 		log.Fatalf("No param named %s\n", name)
 	}
-	return param.min, param.max, param.value
-}
-
-func LoadParams(filepath string) {
-	file, err := os.Open(filepath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		if strings.HasPrefix(line, "#") {
-			continue
-		}
-		parts := strings.Split(line, " ")
-		if len(parts) == 4 {
-			addParam(parts[0], getFloat(parts[1]), getFloat(parts[2]), getFloat(parts[3]))
-		}
-	}
+	return param.Min, param.Max, param.Value
 }
 
 func getFloat(str string) float64 {
