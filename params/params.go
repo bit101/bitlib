@@ -8,18 +8,15 @@ import (
 )
 
 type Param struct {
-	Min   float64 `json:"min"`
-	Max   float64 `json:"max"`
-	Value float64 `json:"value"`
+	Min      float64 `json:"min"`
+	Max      float64 `json:"max"`
+	Value    float64 `json:"value"`
+	Decimals int     `json:"decimals"`
 }
 
 type Params map[string]*Param
 
 var params Params
-
-func addParam(name string, min, max, value float64) {
-	params[name] = &Param{min, max, value}
-}
 
 func LoadParams(filepath string) {
 	bytes, err := os.ReadFile(filepath)
@@ -51,6 +48,14 @@ func GetMax(name string) float64 {
 		log.Fatalf("No param named %s\n", name)
 	}
 	return param.Max
+}
+
+func GetDecimals(name string) int {
+	param, ok := params[name]
+	if !ok {
+		log.Fatalf("No param named %s\n", name)
+	}
+	return param.Decimals
 }
 
 func GetParam(name string) (float64, float64, float64) {
