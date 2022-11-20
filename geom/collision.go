@@ -1,3 +1,4 @@
+// Package geom has geometry related structs and funcs.
 package geom
 
 import (
@@ -112,6 +113,7 @@ func SegmentOnRect(x0, y0, x1, y1, rx, ry, rw, rh float64) bool {
 	return false
 }
 
+// PointDistanceToSegment reports the distance from a point to a line segment
 func PointDistanceToSegment(px, py, x0, y0, x1, y1 float64) float64 {
 	// https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
 	a := px - x0
@@ -120,11 +122,11 @@ func PointDistanceToSegment(px, py, x0, y0, x1, y1 float64) float64 {
 	d := y1 - y0
 
 	dot := a*c + b*d
-	len_sq := c*c + d*d
+	lenSq := c*c + d*d
 	param := -1.0
-	if len_sq != 0 {
+	if lenSq != 0 {
 		//in case of 0 length line
-		param = dot / len_sq
+		param = dot / lenSq
 	}
 
 	var xx, yy float64
@@ -142,6 +144,7 @@ func PointDistanceToSegment(px, py, x0, y0, x1, y1 float64) float64 {
 	return math.Hypot(px-xx, py-yy)
 }
 
+// PointDistanceToLine reports the distance from a point to a line.
 func PointDistanceToLine(px, py, x0, y0, x1, y1 float64) float64 {
 	dx := x1 - x0
 	dy := y1 - y0
@@ -150,6 +153,7 @@ func PointDistanceToLine(px, py, x0, y0, x1, y1 float64) float64 {
 	return numerator / denominator
 }
 
+// CircleToLine reports the points of intersection between a line and a circle.
 func CircleToLine(x0, y0, x1, y1, cx, cy, r float64) (*Point, *Point, bool) {
 	p := NewPoint(cx, cy)
 	l := NewLine(x0, y0, x1, y1)

@@ -1,9 +1,12 @@
+// Package geom has geometry related structs and funcs.
 package geom
 
+// Circle is the struct representing a circle.
 type Circle struct {
 	X, Y, Radius float64
 }
 
+// NewCircle creates a new circle struct.
 func NewCircle(x, y, r float64) *Circle {
 	return &Circle{
 		X:      x,
@@ -12,10 +15,12 @@ func NewCircle(x, y, r float64) *Circle {
 	}
 }
 
+// Hit reports whether this circle intersects another circle.
 func (c *Circle) Hit(d *Circle) bool {
 	return CircleOnCircle(c.X, c.Y, c.Radius, d.X, d.Y, d.Radius)
 }
 
+// Contains reports whether a point is within this circle.
 func (c *Circle) Contains(p *Point) bool {
 	return PointInCircle(p.X, p.X, c.X, c.Y, c.Radius)
 }

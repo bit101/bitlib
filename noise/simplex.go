@@ -33,11 +33,12 @@ Adapted to Go by Lars Pensjö (lars.pensjo@gmail.com)
  * were implemented from scratch by me from Ken Perlin's text.
  */
 
+// Package noise creates Perlin and Simplex noise.
 package noise
 
 // We don't need to include this. It does no harm, but no use either.
 
-func FASTFLOOR(x float64) int {
+func fastFloor(x float64) int {
 	if x > 0 {
 		return int(x)
 	}
@@ -108,7 +109,7 @@ var perm = [512]uint8{
  * float SLnoise = (noise(x,y,z) + 1.0) * 0.5;
  */
 
-func Q(cond bool, v1 float64, v2 float64) float64 {
+func q(cond bool, v1 float64, v2 float64) float64 {
 	if cond {
 		return v1
 	}
@@ -126,21 +127,21 @@ func grad1(hash uint8, x float64) float64 {
 
 func grad2(hash uint8, x float64, y float64) float64 {
 	h := hash & 7       // Convert low 3 bits of hash code
-	u := Q(h < 4, x, y) // into 8 simple gradient directions,
-	v := Q(h < 4, y, x) // and compute the dot product with (x,y).
-	return Q(h&1 != 0, -u, u) + Q(h&2 != 0, -2*v, 2*v)
+	u := q(h < 4, x, y) // into 8 simple gradient directions,
+	v := q(h < 4, y, x) // and compute the dot product with (x,y).
+	return q(h&1 != 0, -u, u) + q(h&2 != 0, -2*v, 2*v)
 }
 
 func grad3(hash uint8, x, y, z float64) float64 {
 	h := hash & 15                                // Convert low 4 bits of hash code into 12 simple
-	u := Q(h < 8, x, y)                           // gradient directions, and compute dot product.
-	v := Q(h < 4, y, Q(h == 12 || h == 14, x, z)) // Fix repeats at h = 12 to 15
-	return Q(h&1 != 0, -u, u) + Q(h&2 != 0, -v, v)
+	u := q(h < 8, x, y)                           // gradient directions, and compute dot product.
+	v := q(h < 4, y, q(h == 12 || h == 14, x, z)) // Fix repeats at h = 12 to 15
+	return q(h&1 != 0, -u, u) + q(h&2 != 0, -v, v)
 }
 
-// 1D simplex noise
+// Simplex1 is 1D simplex noise
 func Simplex1(x float64) float64 {
-	i0 := FASTFLOOR(x)
+	i0 := fastFloor(x)
 	i1 := i0 + 1
 	x0 := x - float64(i0)
 	x1 := x0 - 1
@@ -159,7 +160,7 @@ func Simplex1(x float64) float64 {
 	return (n0 + n1 + 0.076368899) / 2.45488110001
 }
 
-// 2D simplex noise
+// Simplex2 is 2D simplex noise
 func Simplex2(x, y float64) float64 {
 
 	const F2 = 0.366025403 // F2 = 0.5*(sqrt(3.0)-1.0)
@@ -171,8 +172,8 @@ func Simplex2(x, y float64) float64 {
 	s := (x + y) * F2 // Hairy factor for 2D
 	xs := x + s
 	ys := y + s
-	i := FASTFLOOR(xs)
-	j := FASTFLOOR(ys)
+	i := fastFloor(xs)
+	j := fastFloor(ys)
 
 	t := float64(i+j) * G2
 	X0 := float64(i) - t // Unskew the cell origin back to (x,y) space
@@ -234,7 +235,7 @@ func Simplex2(x, y float64) float64 {
 	return (n0 + n1 + n2) / 0.022108854818853867
 }
 
-// 3D simplex noise
+// Simplex3 is 3D simplex noise
 func Simplex3(x, y, z float64) float64 {
 
 	// Simple skewing factors for the 3D case
@@ -248,9 +249,9 @@ func Simplex3(x, y, z float64) float64 {
 	xs := x + s
 	ys := y + s
 	zs := z + s
-	i := FASTFLOOR(xs)
-	j := FASTFLOOR(ys)
-	k := FASTFLOOR(zs)
+	i := fastFloor(xs)
+	j := fastFloor(ys)
+	k := fastFloor(zs)
 
 	t := float64(i+j+k) * G3
 	X0 := float64(i) - t // Unskew the cell origin back to (x,y,z) space

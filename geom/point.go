@@ -1,3 +1,4 @@
+// Package geom has geometry related structs and funcs.
 package geom
 
 import (

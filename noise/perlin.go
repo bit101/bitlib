@@ -1,3 +1,4 @@
+// Package noise creates Perlin and Simplex noise.
 package noise
 
 import (

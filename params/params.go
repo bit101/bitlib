@@ -1,3 +1,4 @@
+// Package params reads params from a json file.
 package params
 
 import (
@@ -7,6 +8,7 @@ import (
 	"strconv"
 )
 
+// Param represents a single parameter.
 type Param struct {
 	Min      float64 `json:"min"`
 	Max      float64 `json:"max"`
@@ -14,10 +16,12 @@ type Param struct {
 	Decimals int     `json:"decimals"`
 }
 
+// Params is a list of Params.
 type Params map[string]*Param
 
 var params Params
 
+// LoadParams loads the params from an external json file.
 func LoadParams(filepath string) {
 	bytes, err := os.ReadFile(filepath)
 	if err != nil {
@@ -26,6 +30,7 @@ func LoadParams(filepath string) {
 	json.Unmarshal(bytes, &params)
 }
 
+// GetValue gets a named param's value.
 func GetValue(name string) float64 {
 	param, ok := params[name]
 	if !ok {
@@ -34,6 +39,7 @@ func GetValue(name string) float64 {
 	return param.Value
 }
 
+// GetMin gets the minimum value of a named param.
 func GetMin(name string) float64 {
 	param, ok := params[name]
 	if !ok {
@@ -42,6 +48,7 @@ func GetMin(name string) float64 {
 	return param.Min
 }
 
+// GetMax gets the maximum value of a given param.
 func GetMax(name string) float64 {
 	param, ok := params[name]
 	if !ok {
@@ -50,6 +57,7 @@ func GetMax(name string) float64 {
 	return param.Max
 }
 
+// GetDecimals gets the number of decimals for a given parameter.
 func GetDecimals(name string) int {
 	param, ok := params[name]
 	if !ok {
@@ -58,6 +66,7 @@ func GetDecimals(name string) int {
 	return param.Decimals
 }
 
+// GetParam gets the min, max and value of a given parameter.
 func GetParam(name string) (float64, float64, float64) {
 	param, ok := params[name]
 	if !ok {
@@ -74,6 +83,7 @@ func getFloat(str string) float64 {
 	return value
 }
 
+// List lists all parameters.
 func List() []string {
 	list := make([]string, len(params))
 	i := 0
