@@ -7,11 +7,12 @@ import (
 	"github.com/bit101/bitlib/random"
 )
 
+// Point is the structure representing a 2D point.
 type Point struct {
 	X, Y float64
 }
 
-// Creates a new point.
+// NewPoint creates a new point.
 func NewPoint(x, y float64) *Point {
 	return &Point{X: x, Y: y}
 }

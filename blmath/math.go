@@ -1,3 +1,4 @@
+// Package blmath contains numeric and math related functions.
 package blmath
 
 import (

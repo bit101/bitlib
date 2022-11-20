@@ -1,3 +1,4 @@
+// Package easing contains easing functions.
 package easing
 
 import "math"
@@ -13,13 +14,13 @@ func QuadraticEaseIn(t, start, end float64) float64 {
 	return start + (end-start)*t
 }
 
-//  interpolates between a start and end value with a quadratic easing.
+// QuadraticEaseOut interpolates between a start and end value with a quadratic easing.
 func QuadraticEaseOut(t, start, end float64) float64 {
 	t = -t * (t - 2)
 	return start + (end-start)*t
 }
 
-//  interpolates between a start and end value with a quadratic easing.
+// QuadraticEaseInOut interpolates between a start and end value with a quadratic easing.
 func QuadraticEaseInOut(t, start, end float64) float64 {
 	if t < 0.5 {
 		t = 2 * t * t

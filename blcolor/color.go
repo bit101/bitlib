@@ -1,3 +1,4 @@
+// Package blcolor contains color creation and manipulation tools.
 package blcolor
 
 import (
