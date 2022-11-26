@@ -8,6 +8,7 @@ import (
 // TwoPi 2 pi
 const TwoPi = math.Pi * 2
 
+// Tau 2 pi
 const Tau = math.Pi * 2
 
 // HalfPi pi / 2
@@ -75,14 +76,17 @@ func SinRange(angle float64, min float64, max float64) float64 {
 	return Map(math.Sin(angle), -1, 1, min, max)
 }
 
-// Fract returns the fractional part of a floating point number.
-func Fract(n float64) float64 {
-	return n - math.Floor(n)
-}
-
 // CosRange returns the cos of an angle mapped to a min/max range.
 func CosRange(angle float64, min float64, max float64) float64 {
 	return Map(math.Cos(angle), -1, 1, min, max)
+}
+
+// Fract returns the fractional part of a floating point number.
+func Fract(n float64) float64 {
+	if n < 0 {
+		return n + math.Floor(math.Abs(n))
+	}
+	return n - math.Floor(n)
 }
 
 // LerpSin maps a normal value to min and max values with a sine wave.
