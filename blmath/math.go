@@ -8,6 +8,8 @@ import (
 // TwoPi 2 pi
 const TwoPi = math.Pi * 2
 
+const Tau = math.Pi * 2
+
 // HalfPi pi / 2
 const HalfPi = math.Pi / 2
 
