@@ -75,3 +75,8 @@ func (t *Triangle) Area() float64 {
 	b := seg.Length()
 	return h * b / 2
 }
+
+// Points returns a list of points that make up this triangle
+func (t *Triangle) Points() []*Point {
+	return []*Point{t.PointA, t.PointB, t.PointC}
+}
