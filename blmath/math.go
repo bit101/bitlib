@@ -112,3 +112,10 @@ func ComplexImagAbs(z complex128) complex128 {
 func ComplexMagnitude(z complex128) float64 {
 	return math.Hypot(real(z), imag(z))
 }
+
+// Gamma increases/decreases the given value by an amount specified in gamma.
+// Usually val is a pixel brightness value from 0.0 - 1.0.
+// gamma of 1.0 makes no change. Higher is brighter, lower is darker.
+func Gamma(val, gamma float64) float64 {
+	return math.Pow(val, 1/gamma)
+}
