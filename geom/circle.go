@@ -1,7 +1,11 @@
 // Package geom has geometry related structs and funcs.
 package geom
 
-import "math"
+import (
+	"math"
+
+	"github.com/bit101/bitlib/blmath"
+)
 
 // Circle is the struct representing a circle.
 type Circle struct {
@@ -42,6 +46,40 @@ func (c *Circle) InvertXY(x, y float64) (float64, float64) {
 	ratio := dist1 / dist0
 
 	return c.X + dx*ratio, c.Y + dy*ratio
+}
+
+// OuterCircles returns a slice of circles arrange around the outside of the given circle.
+func OuterCircles(c Circle, count int, rotation float64) []*Circle {
+	circles := make([]*Circle, count)
+	countF := float64(count)
+
+	angle := blmath.Tau / countF
+	sinA2 := math.Sin(angle / 2)
+	s := (c.Radius * sinA2) / (1 - sinA2)
+	r := c.Radius + s
+	a := rotation
+	for i := 0; i < count; i++ {
+		circles[i] = NewCircle(c.X+math.Cos(a)*r, c.Y+math.Sin(a)*r, s)
+		a += angle
+	}
+	return circles
+}
+
+// InnerCircles returns a slice of circles arrange around the inside of the given circle.
+func InnerCircles(c Circle, count int, rotation float64) []*Circle {
+	circles := make([]*Circle, count)
+	countF := float64(count)
+
+	angle := blmath.Tau / countF
+	sinA2 := math.Sin(angle / 2)
+	s := (c.Radius * sinA2) / (1 + sinA2)
+	r := c.Radius - s
+	a := rotation
+	for i := 0; i < count; i++ {
+		circles[i] = NewCircle(c.X+math.Cos(a)*r, c.Y+math.Sin(a)*r, s)
+		a += angle
+	}
+	return circles
 }
 
 // func TangentPointToCircle(point *Point, circle *Circle, anticlockwise bool) *Point {
