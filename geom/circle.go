@@ -49,7 +49,7 @@ func (c *Circle) InvertXY(x, y float64) (float64, float64) {
 }
 
 // OuterCircles returns a slice of circles arrange around the outside of the given circle.
-func OuterCircles(c Circle, count int, rotation float64) []*Circle {
+func OuterCircles(c *Circle, count int, rotation float64) []*Circle {
 	circles := make([]*Circle, count)
 	countF := float64(count)
 
@@ -66,7 +66,7 @@ func OuterCircles(c Circle, count int, rotation float64) []*Circle {
 }
 
 // InnerCircles returns a slice of circles arrange around the inside of the given circle.
-func InnerCircles(c Circle, count int, rotation float64) []*Circle {
+func InnerCircles(c *Circle, count int, rotation float64) []*Circle {
 	circles := make([]*Circle, count)
 	countF := float64(count)
 
