@@ -450,3 +450,70 @@ func TestLerpSin(t *testing.T) {
 		}
 	}
 }
+
+func TestGCD(t *testing.T) {
+	tests := []struct {
+		a, b, exp int
+	}{
+		{12, 9, 3},
+		{28, 7, 7},
+		{33, 7, 1},
+		{33, 0, 0},
+		{32, -8, 8},
+		{-32, -8, 8},
+		{-32, 8, 8},
+		{117, 72, 9},
+	}
+
+	for _, test := range tests {
+		gcd := GCD(test.a, test.b)
+		if gcd != test.exp {
+			t.Errorf("Expected %d, got %d", test.exp, gcd)
+		}
+	}
+}
+
+func TestLCM(t *testing.T) {
+	tests := []struct {
+		a, b, exp int
+	}{
+		{12, 9, 36},
+		{28, 7, 28},
+		{33, 7, 231},
+		{32, -8, 32},
+		{-32, -8, 32},
+		{-32, 8, 32},
+		{117, 72, 936},
+	}
+
+	for i, test := range tests {
+		lcm := LCM(test.a, test.b)
+		if lcm != test.exp {
+			t.Errorf("%d. Expected %d, got %d", i, test.exp, lcm)
+		}
+	}
+}
+
+func TestSimplify(t *testing.T) {
+	tests := []struct {
+		a, b, expA, expB int
+	}{
+		{12, 9, 4, 3},
+		{28, 7, 4, 1},
+		{33, 7, 33, 7},
+		{32, -8, 4, -1},
+		{-32, -8, -4, -1},
+		{-32, 8, -4, 1},
+		{117, 72, 13, 8},
+	}
+
+	for i, test := range tests {
+		a, b := Simplify(test.a, test.b)
+		if a != test.expA {
+			t.Errorf("%d. Expected %d, got %d", i, test.expA, a)
+		}
+		if b != test.expB {
+			t.Errorf("%d. Expected %d, got %d", i, test.expB, b)
+		}
+	}
+}

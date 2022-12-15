@@ -119,3 +119,42 @@ func ComplexMagnitude(z complex128) float64 {
 func Gamma(val, gamma float64) float64 {
 	return math.Pow(val, 1/gamma)
 }
+
+// GCD returns the greatest common denominator of two integers.
+func GCD(x, y int) int {
+	if x < 0 {
+		x = -x
+	}
+	if y < 0 {
+		y = -y
+	}
+	result := x
+	if y < x {
+		result = y
+	}
+
+	for result > 0 {
+		if x%result == 0 && y%result == 0 {
+			break
+		}
+		result--
+	}
+	return result
+}
+
+// LCM returns the least common multiple of two integers.
+func LCM(x, y int) int {
+	if x < 0 {
+		x = -x
+	}
+	if y < 0 {
+		y = -y
+	}
+	return x * y / GCD(x, y)
+}
+
+// Simplify reduces an int/int fraction to its simplest form.
+func Simplify(x, y int) (int, int) {
+	g := GCD(x, y)
+	return x / g, y / g
+}
