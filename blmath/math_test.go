@@ -517,3 +517,56 @@ func TestSimplify(t *testing.T) {
 		}
 	}
 }
+
+func TestAbs(t *testing.T) {
+	x := Abs(5)
+	exp := 5
+	if x != exp {
+		t.Errorf("Expected %d, got %d", exp, x)
+	}
+
+	x = Abs(-5)
+	exp = 5
+	if x != exp {
+		t.Errorf("Expected %d, got %d", exp, x)
+	}
+
+	y := Abs(5.0)
+	expf := 5.0
+	if y != expf {
+		t.Errorf("Expected %f, got %f", expf, y)
+	}
+
+	y = Abs(-5.0)
+	expf = 5.0
+	if y != expf {
+		t.Errorf("Expected %f, got %f", expf, y)
+	}
+}
+
+func TestMinMax(t *testing.T) {
+	x := Min(5, 4)
+	exp := 4
+	if x != exp {
+		t.Errorf("Expected %d, got %d", exp, x)
+	}
+
+	x = Max(5, 4)
+	exp = 5
+	if x != exp {
+		t.Errorf("Expected %d, got %d", exp, x)
+	}
+
+	y := Min(5.0, 4.0)
+	expf := 4.0
+	if y != expf {
+		t.Errorf("Expected %f, got %f", expf, y)
+	}
+
+	y = Max(5.0, 4.0)
+	expf = 5.0
+	if y != expf {
+		t.Errorf("Expected %f, got %f", expf, y)
+	}
+
+}

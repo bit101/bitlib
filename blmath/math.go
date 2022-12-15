@@ -121,20 +121,11 @@ func Gamma(val, gamma float64) float64 {
 }
 
 // GCD returns the greatest common denominator of two integers.
-func GCD(x, y int) int {
-	if x < 0 {
-		x = -x
-	}
-	if y < 0 {
-		y = -y
-	}
-	result := x
-	if y < x {
-		result = y
-	}
+func GCD(a, b int) int {
+	result := Min(Abs(a), Abs(b))
 
 	for result > 0 {
-		if x%result == 0 && y%result == 0 {
+		if a%result == 0 && b%result == 0 {
 			break
 		}
 		result--
@@ -144,12 +135,8 @@ func GCD(x, y int) int {
 
 // LCM returns the least common multiple of two integers.
 func LCM(x, y int) int {
-	if x < 0 {
-		x = -x
-	}
-	if y < 0 {
-		y = -y
-	}
+	x = Abs(x)
+	y = Abs(y)
 	return x * y / GCD(x, y)
 }
 
@@ -157,4 +144,33 @@ func LCM(x, y int) int {
 func Simplify(x, y int) (int, int) {
 	g := GCD(x, y)
 	return x / g, y / g
+}
+
+// Number can be an int or float
+type Number interface {
+	int | int64 | float32 | float64
+}
+
+// Abs is a generic absolute value function.
+func Abs[T Number](num T) T {
+	if num < 0 {
+		return -num
+	}
+	return num
+}
+
+// Min is a generic min value function
+func Min[T Number](a, b T) T {
+	if a > b {
+		return b
+	}
+	return a
+}
+
+// Max is a generic max value function
+func Max[T Number](a, b T) T {
+	if a < b {
+		return b
+	}
+	return a
 }
