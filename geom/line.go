@@ -20,6 +20,11 @@ func NewLine(x0, y0, x1, y1 float64) *Line {
 	}
 }
 
+// NewLineFromPoints creates a new line from two Points.
+func NewLineFromPoints(p0, p1 *Point) *Line {
+	return NewLine(p0.X, p0.Y, p1.X, p1.Y)
+}
+
 // HitSegment reports the point of intersection of a line and a line segment.
 func (l *Line) HitSegment(s *Segment) (float64, float64, bool) {
 	return SegmentOnSegment(s.X0, s.Y0, s.X1, s.Y1, l.X0, l.Y0, l.X1, l.Y1)

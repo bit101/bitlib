@@ -21,6 +21,11 @@ func NewCircle(x, y, r float64) *Circle {
 	}
 }
 
+// NewCircleFromPoint creates a new circle struct using a Point object as center.
+func NewCircleFromPoint(center *Point, r float64) *Circle {
+	return NewCircle(center.X, center.Y, r)
+}
+
 // Hit reports whether this circle intersects another circle.
 func (c *Circle) Hit(d *Circle) bool {
 	return CircleOnCircle(c.X, c.Y, c.Radius, d.X, d.Y, d.Radius)

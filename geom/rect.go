@@ -16,6 +16,21 @@ func NewRect(x, y, w, h float64) *Rect {
 	}
 }
 
+// NewRectFromPoints creates a new rectangle.
+func NewRectFromPoints(p0, p1 *Point) *Rect {
+	x0 := p0.X
+	y0 := p0.Y
+	x1 := p1.X
+	y1 := p1.Y
+	if x0 > x1 {
+		x0, x1 = x1, x0
+	}
+	if y0 > y1 {
+		y0, y1 = y1, y0
+	}
+	return NewRect(x0, y0, x1-x0, y1-y0)
+}
+
 // Contains reports whether a point is in this rectangle.
 func (r *Rect) Contains(p *Point) bool {
 	return PointInRect(p.X, p.Y, r.X, r.Y, r.W, r.H)

@@ -62,6 +62,11 @@ func RandomPointInTriangle(A, B, C *Point) *Point {
 	return NewPoint(a*A.X+b*B.X+c*C.X, a*A.Y+b*B.Y+c*C.Y)
 }
 
+// Coords returns the x, y coords of this point.
+func (p *Point) Coords() (float64, float64) {
+	return p.X, p.Y
+}
+
 // Distance between this point and another point
 func (p *Point) Distance(p1 *Point) float64 {
 	return math.Hypot(p.X-p1.X, p.Y-p1.Y)

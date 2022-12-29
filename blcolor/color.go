@@ -4,6 +4,8 @@ package blcolor
 import (
 	"math"
 	"math/rand"
+
+	"github.com/bit101/bitlib/blmath"
 )
 
 // Color holds rgba values for a color.
@@ -70,6 +72,7 @@ func RandomRGB() Color {
 
 // HSV creates a Color struct using hue (0.0 - 360.0), value (0.0 - 1.0) and value (0.0 - 1.0) (a = 1.0).
 func HSV(h float64, s float64, v float64) Color {
+	h = blmath.ModPos(h, 360)
 	h = h / 360.0
 	i := math.Floor(h * 6.0)
 	f := h*6.0 - i

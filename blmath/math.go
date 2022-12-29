@@ -174,3 +174,21 @@ func Max[T Number](a, b T) T {
 	}
 	return a
 }
+
+// ModPos computes a % b for float64, and ensures the result is positive
+func ModPos(a, b float64) float64 {
+	val := math.Mod(a, b)
+	if (val < 0 && b > 0) || (val > 0 && b < 0) {
+		val += b
+	}
+	return val
+}
+
+// ModPosInt computes a % b for int, and ensures the result is positive
+func ModPosInt(a, b int) int {
+	val := a % b
+	if (val < 0 && b > 0) || (val > 0 && b < 0) {
+		val += b
+	}
+	return val
+}

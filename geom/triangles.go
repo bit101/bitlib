@@ -17,13 +17,9 @@ func NewTriangleFromPoints(pA, pB, pC *Point) *Triangle {
 	return &Triangle{pA, pB, pC}
 }
 
-// NewTriangleXY creates a new triangle from three x, y pairs
-func NewTriangleXY(x0, y0, x1, y1, x2, y2 float64) *Triangle {
-	return &Triangle{
-		NewPoint(x0, y0),
-		NewPoint(x1, y1),
-		NewPoint(x2, y2),
-	}
+// NewTriangle creates a new triangle from three x, y pairs
+func NewTriangle(x0, y0, x1, y1, x2, y2 float64) *Triangle {
+	return NewTriangleFromPoints(NewPoint(x0, y0), NewPoint(x1, y1), NewPoint(x2, y2))
 }
 
 // EquilateralTriangleFromCenterAndPoint creates a new equilateral triangle from a centroid point and another point.
