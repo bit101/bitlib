@@ -136,3 +136,28 @@ func (p *Point) Rotate(angle float64) {
 func Clockwise(p1, p2, p3 *Point) bool {
 	return (p1.X-p3.X)*(p2.Y-p3.Y)-(p2.X-p3.X)*(p1.Y-p3.Y) > 0
 }
+
+// ConvexHull returns a list of points that form a convex hull around the given set of points.
+func ConvexHull(points []*Point) []*Point {
+	hull := []*Point{}
+	pointOnHull := points[0]
+	for _, p := range points {
+		if p.X < pointOnHull.X {
+			pointOnHull = p
+		}
+	}
+	for true {
+		hull = append(hull, pointOnHull)
+		endpoint := points[0]
+		for _, p := range points {
+			if endpoint == pointOnHull || Clockwise(p, endpoint, pointOnHull) {
+				endpoint = p
+			}
+		}
+		pointOnHull = endpoint
+		if endpoint == hull[0] {
+			break
+		}
+	}
+	return hull
+}
