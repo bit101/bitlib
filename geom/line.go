@@ -27,7 +27,7 @@ func (l *Line) HitSegment(s *Segment) (float64, float64, bool) {
 
 // HitLine reports the point of intersection of two lines.
 func (l *Line) HitLine(m *Line) (float64, float64, bool) {
-	return SegmentOnLine(l.X0, l.Y0, l.X1, l.Y1, m.X0, m.Y0, m.X1, m.Y1)
+	return LineOnLine(l.X0, l.Y0, l.X1, l.Y1, m.X0, m.Y0, m.X1, m.Y1)
 }
 
 // ClosestPoint reports the point on a line closest to another given point.
@@ -43,4 +43,11 @@ func (l *Line) ClosestPoint(p *Point) *Point {
 // DistanceTo reports the distance from a given point to this line.
 func (l *Line) DistanceTo(p *Point) float64 {
 	return l.ClosestPoint(p).Distance(p)
+}
+
+// Perpendicular returns a line that is perpendicular to the line and crosses through the given point.
+func (l *Line) Perpendicular(p *Point) *Line {
+	dx := l.X1 - l.X0
+	dy := l.Y1 - l.Y0
+	return NewLine(p.X, p.Y, p.X-dy, p.Y+dx)
 }

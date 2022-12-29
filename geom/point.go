@@ -126,3 +126,8 @@ func (p *Point) Rotate(angle float64) {
 	p.X = x
 	p.Y = y
 }
+
+// Clockwise returns whether or not the three points listed are in clockwise order
+func Clockwise(p1, p2, p3 *Point) bool {
+	return (p1.X-p3.X)*(p2.Y-p3.Y)-(p2.X-p3.X)*(p1.Y-p3.Y) > 0
+}
