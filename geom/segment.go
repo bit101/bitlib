@@ -24,7 +24,7 @@ func NewSegment(x0, y0, x1, y1 float64) *Segment {
 
 // NewSegmentFromPoints creates a new line segment.
 func NewSegmentFromPoints(p0, p1 *Point) *Segment {
-	return NewSegment(p0.X, p0.Y, p1.X-p1.X, p1.Y-p1.Y)
+	return NewSegment(p0.X, p0.Y, p1.X, p1.Y)
 }
 
 // HitSegment returns the point of intersection between this and another segment.

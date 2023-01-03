@@ -62,6 +62,24 @@ func RandomPointInTriangle(A, B, C *Point) *Point {
 	return NewPoint(a*A.X+b*B.X+c*C.X, a*A.Y+b*B.Y+c*C.Y)
 }
 
+// PointList is a slice of Points
+type PointList []*Point
+
+// NewPointList creates a new point list
+func NewPointList() PointList {
+	return PointList{}
+}
+
+// Add adds a point to the list
+func (p *PointList) Add(point *Point) {
+	*p = append(*p, point)
+}
+
+// AddXY adds a point to the list
+func (p *PointList) AddXY(x, y float64) {
+	*p = append(*p, NewPoint(x, y))
+}
+
 // Coords returns the x, y coords of this point.
 func (p *Point) Coords() (float64, float64) {
 	return p.X, p.Y
@@ -138,8 +156,8 @@ func Clockwise(p1, p2, p3 *Point) bool {
 }
 
 // ConvexHull returns a list of points that form a convex hull around the given set of points.
-func ConvexHull(points []*Point) []*Point {
-	hull := []*Point{}
+func ConvexHull(points PointList) PointList {
+	hull := NewPointList()
 	pointOnHull := points[0]
 	for _, p := range points {
 		if p.X < pointOnHull.X {
@@ -147,7 +165,7 @@ func ConvexHull(points []*Point) []*Point {
 		}
 	}
 	for true {
-		hull = append(hull, pointOnHull)
+		hull.Add(pointOnHull)
 		endpoint := points[0]
 		for _, p := range points {
 			if endpoint == pointOnHull || Clockwise(p, endpoint, pointOnHull) {

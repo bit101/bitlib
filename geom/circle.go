@@ -31,6 +31,22 @@ func (c *Circle) Hit(d *Circle) bool {
 	return CircleOnCircle(c.X, c.Y, c.Radius, d.X, d.Y, d.Radius)
 }
 
+// Intersection returns the points of intersection (if any) with another circles
+// and a bool indicating whether or not they intersect at all.
+func (c *Circle) Intersection(c1 *Circle) (*Point, *Point, bool) {
+	if c.Hit(c1) {
+		d := math.Sqrt(math.Pow(c.X-c1.X, 2) + math.Pow(c.Y-c1.Y, 2))
+		l := (c.Radius*c.Radius - c1.Radius*c1.Radius + d*d) / (2 * d)
+		h := math.Sqrt(c.Radius*c.Radius - l*l)
+		x0 := l*(c1.X-c.X)/d + h*(c1.Y-c.Y)/d + c.X
+		y0 := l*(c1.Y-c.Y)/d - h*(c1.X-c.X)/d + c.Y
+		x1 := l*(c1.X-c.X)/d - h*(c1.Y-c.Y)/d + c.X
+		y1 := l*(c1.Y-c.Y)/d + h*(c1.X-c.X)/d + c.Y
+		return NewPoint(x0, y0), NewPoint(x1, y1), true
+	}
+	return nil, nil, false
+}
+
 // Contains reports whether a point is within this circle.
 func (c *Circle) Contains(p *Point) bool {
 	return PointInCircle(p.X, p.X, c.X, c.Y, c.Radius)
