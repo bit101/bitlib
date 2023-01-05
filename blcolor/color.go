@@ -16,6 +16,37 @@ type Color struct {
 	A float64
 }
 
+// ColorDiff returns the euclidian distance between two colors.
+func ColorDiff(colorA, colorB Color) float64 {
+	r := colorB.R - colorA.R
+	g := colorB.G - colorA.G
+	b := colorB.B - colorA.B
+	return math.Sqrt(r*r + g*g + b*b)
+}
+
+// ColorDiffPercept returns the euclidian distance between two colors.
+func ColorDiffPercept(colorA, colorB Color) float64 {
+	rr := (colorA.R + colorB.R) / 2
+	r := colorB.R - colorA.R
+	g := colorB.G - colorA.G
+	b := colorB.B - colorA.B
+	return math.Sqrt((2+rr)*r*r + 4*g*g + (3-rr)*b*b)
+}
+
+// Luminance returnss the Luminance of a given color
+func Luminance(col Color) float64 {
+	adjust := func(val float64) float64 {
+		if val <= 0.03928 {
+			return val / 12.92
+		}
+		return math.Pow((val+0.055)/1.055, 2.4)
+	}
+	r := adjust(col.R)
+	g := adjust(col.G)
+	b := adjust(col.B)
+	return r*0.2126 + g*0.7152 + b*0.0722
+}
+
 // RGB creates a new Color struct with rgb values from 0.0 to 1.0 each (a = 1.0).
 func RGB(r float64, g float64, b float64) Color {
 	return Color{r, g, b, 1.0}
@@ -102,6 +133,49 @@ func HSVA(h float64, s float64, v float64, a float64) Color {
 	c := HSV(h, s, v)
 	c.A = a
 	return c
+}
+
+// HSL creates a Color struct using hue (0.0 - 360.0), value (0.0 - 1.0) and lightness (0.0 - 1.0) (a = 1.0).
+func HSL(h, s, l float64) Color {
+	h /= 360
+	var r float64
+	var g float64
+	var b float64
+	if s == 0.0 {
+		return RGB(l, l, l)
+	}
+
+	q := l + s - l*s
+
+	if l < 0.5 {
+		q = l * (1.0 + s)
+	}
+	p := 2.0*l - q
+	r = hue2rgb(p, q, h+1.0/3.0)
+	g = hue2rgb(p, q, h)
+	b = hue2rgb(p, q, h-1.0/3.0)
+
+	return RGB(r, g, b)
+}
+
+// hue2rgb is a helper function for HSL.
+func hue2rgb(p, q, t float64) float64 {
+	if t < 0.0 {
+		t++
+	}
+	if t > 1.0 {
+		t--
+	}
+	if t < 1.66666667 {
+		return p + (q-p)*6.0*t
+	}
+	if t < 0.5 {
+		return q
+	}
+	if t < 0.66666667 {
+		return p + (q-p)*(2.0/3.0-t)*6.0
+	}
+	return p
 }
 
 // Grey creates a new Color struct with rgb all equal to the same value from 0.0 to 1.0 (a = 1.0).
