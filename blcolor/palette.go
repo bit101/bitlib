@@ -61,8 +61,8 @@ func (p *Palette) Len() int {
 
 // Less returns if one color has lower luminance another (used for sorting).
 func (p *Palette) Less(i, j int) bool {
-	a := Luminance(p.colors[i])
-	b := Luminance(p.colors[j])
+	a := p.colors[i].Luminance()
+	b := p.colors[j].Luminance()
 	return a < b
 }
 
