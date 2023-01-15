@@ -36,41 +36,56 @@ func (c Color) Luminance() float64 {
 	return r*0.2126 + g*0.7152 + b*0.0722
 }
 
-// Lighten lightens a color by a percent.
-// i.e. Lighten(0.05) will lighten the color by 5% of its current value.
-func (c Color) Lighten(mult float64) Color {
-	if mult <= 0 {
-		return c.Darken(-mult)
+// Scale scales the r, g, b channels by a percent.
+// This will lighten or darken the color.
+// Scale(1.05) will lighten the color by 5% of its current value.
+// Scale(0.95) will darken the color by 5% of its current value.
+func (c Color) Scale(mult float64) Color {
+	// no change
+	if mult == 1.0 {
+		return c
 	}
-	mult += 1.0
 
-	r := c.R * mult
-	g := c.G * mult
-	b := c.B * mult
-	max := math.Max(r, math.Max(g, b))
-	if max <= 1.0 {
+	// it's black
+	if mult <= 0.0 {
+		return RGBA(0, 0, 0, c.A)
+	}
+
+	// it's between 0 and 1. darken it.
+	if mult < 1.0 {
+		r := c.R * mult
+		g := c.G * mult
+		b := c.B * mult
 		return RGBA(r, g, b, c.A)
 	}
-	total := r + g + b
-	if total > 3.0 {
-		return RGBA(1, 1, 1, c.A)
-	}
-	x := (3.0 - total) / (3.0*max - total)
-	gray := 1.0 - x*max
-	return RGBA(gray+x*r, gray+x*g, gray+x*b, c.A)
-}
 
-// Darken darkens a color by a percent.
-// i.e. Darken(0.05) will darken the color by 5% of its current value.
-func (c Color) Darken(mult float64) Color {
-	if mult <= 0 {
-		return c.Lighten(-mult)
-	}
-	mult = 1.0 - mult
-
+	// it's over 1. lighten it.
 	r := c.R * mult
 	g := c.G * mult
 	b := c.B * mult
+
+	// need to check if any channel has gone over 1.0 and adjust.
+	max := math.Max(r, math.Max(g, b))
+	if max <= 1.0 {
+		// everything is in range. use the multiplied values.
+		return RGBA(r, g, b, c.A)
+	}
+
+	total := r + g + b
+	if total > 3.0 {
+		// brightness is maxed out. return white.
+		return RGBA(1, 1, 1, c.A)
+	}
+
+	// at least one channel has maxed out, but not all.
+	// map each channel value from the range of avg->max to the range avg->1.0
+	// this is really just blmath.Map, inlined and optimized
+	avg := total / 3.0
+	ratio := (1.0 - avg) / (max - avg)
+	r = avg + ratio*(r-avg)
+	g = avg + ratio*(g-avg)
+	b = avg + ratio*(b-avg)
+
 	return RGBA(r, g, b, c.A)
 }
 
