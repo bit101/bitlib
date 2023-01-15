@@ -40,6 +40,8 @@ func (c Color) Luminance() float64 {
 // This will lighten or darken the color.
 // Scale(1.05) will lighten the color by 5% of its current value.
 // Scale(0.95) will darken the color by 5% of its current value.
+// This is virtually the same as getting h, s, l and scaling the l
+// But probably simpler in most cases.
 func (c Color) Scale(mult float64) Color {
 	// no change
 	if mult == 1.0 {
@@ -71,8 +73,7 @@ func (c Color) Scale(mult float64) Color {
 		return RGBA(r, g, b, c.A)
 	}
 
-	total := r + g + b
-	if total > 3.0 {
+	if r >= 1.0 && g >= 1.0 && b >= 1.0 {
 		// brightness is maxed out. return white.
 		return RGBA(1, 1, 1, c.A)
 	}
@@ -80,7 +81,7 @@ func (c Color) Scale(mult float64) Color {
 	// at least one channel has maxed out, but not all.
 	// map each channel value from the range of avg->max to the range avg->1.0
 	// this is really just blmath.Map, inlined and optimized
-	avg := total / 3.0
+	avg := (r + g + b) / 3.0
 	ratio := (1.0 - avg) / (max - avg)
 	r = avg + ratio*(r-avg)
 	g = avg + ratio*(g-avg)
