@@ -15,11 +15,13 @@ func (c Color) ColorDiff(colorB Color) float64 {
 
 // ColorDiffPercept returns the euclidian distance between two colors.
 func (c Color) ColorDiffPercept(colorB Color) float64 {
-	rr := (c.R + colorB.R) / 2
 	r := colorB.R - c.R
 	g := colorB.G - c.G
 	b := colorB.B - c.B
-	return math.Sqrt((2+rr)*r*r + 4*g*g + (3-rr)*b*b)
+	if (c.R+colorB.R)/2 < 0.5 {
+		return math.Sqrt(2*r*r + 4*g*g + 3*b*b)
+	}
+	return math.Sqrt(3*r*r + 4*g*g + 2*b*b)
 }
 
 // Luminance returnss the Luminance of a given color
@@ -34,6 +36,18 @@ func (c Color) Luminance() float64 {
 	g := adjust(c.G)
 	b := adjust(c.B)
 	return r*0.2126 + g*0.7152 + b*0.0722
+}
+
+// Contrast returns the contrast between this color and another color.
+// ref: https://www.w3.org/TR/2012/NOTE-WCAG20-TECHS-20120103/G17.html
+func (c Color) Contrast(c2 Color) float64 {
+	l1 := c.Luminance()
+	l2 := c2.Luminance()
+	if l1 < l2 {
+		return (l2 + 0.05) / (l1 + 0.05)
+	}
+	return (l1 + 0.05) / (l2 + 0.05)
+
 }
 
 // Scale scales the r, g, b channels by a percent.
