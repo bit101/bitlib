@@ -47,7 +47,17 @@ func (c Color) Contrast(c2 Color) float64 {
 		return (l2 + 0.05) / (l1 + 0.05)
 	}
 	return (l1 + 0.05) / (l2 + 0.05)
+}
 
+// Invert returns a color with the inverted RGB values of the original.
+func (c Color) Invert() Color {
+	return RGBA(1.0-c.R, 1.0-c.G, 1.0-c.B, c.A)
+}
+
+// Rotate returns a color with the hue rotated by the specified amount.
+func (c Color) Rotate(degrees float64) Color {
+	h, s, l := c.ToHSL()
+	return HSLA(h+degrees, s, l, c.A)
 }
 
 // Scale scales the r, g, b channels by a percent.
@@ -187,4 +197,13 @@ func (c Color) ToHSV() (float64, float64, float64) {
 
 	v := max * 100
 	return h, s, v
+}
+
+// ToCMYK returns the cyan, magenta, yellow and black of a color.
+func (c Color) ToCMYK() (float64, float64, float64, float64) {
+	k := 1.0 - c.maxRGB()
+	cy := (1.0 - c.R - k) / (1.0 - k)
+	m := (1.0 - c.G - k) / (1.0 - k)
+	y := (1.0 - c.B - k) / (1.0 - k)
+	return cy * 100, m * 100, y * 100, k * 100
 }
