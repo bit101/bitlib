@@ -41,6 +41,16 @@ func Wrap(value float64, min float64, max float64) float64 {
 	return min + math.Mod((math.Mod(value-min, r)+r), r)
 }
 
+// WrapTau wraps a number to be within 0 to 2 * Pi
+func WrapTau(value float64) float64 {
+	return Wrap(value, 0, Tau)
+}
+
+// WrapPi wraps a number to be within -Pi and +Pi
+func WrapPi(value float64) float64 {
+	return Wrap(value, -math.Pi, math.Pi)
+}
+
 // Clamp enforces a value does not go beyond a min/max range.
 func Clamp(value float64, min float64, max float64) float64 {
 	// let min and max be reversed and still work.
