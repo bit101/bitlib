@@ -568,5 +568,72 @@ func TestMinMax(t *testing.T) {
 	if y != expf {
 		t.Errorf("Expected %f, got %f", expf, y)
 	}
+}
 
+func TestWrapTau(t *testing.T) {
+	tests := []struct {
+		x, exp float64
+	}{
+		{1.23, 1.23},
+		{7.89, 7.89 - Tau},
+		{17.89, 17.89 - 2*Tau},
+		{19.89, 19.89 - 3*Tau},
+		{-1.23, Tau - 1.23},
+		{-7.89, 2*Tau - 7.89},
+		{-17.89, 3*Tau - 17.89},
+		{0, 0},
+		{Tau, 0},
+		{-Tau, 0},
+		{2 * Tau, 0},
+		{-2 * Tau, 0},
+		{20 * Tau, 0},
+		{-20 * Tau, 0},
+		{math.Pi, math.Pi},
+		{2 * math.Pi, 0},
+		{-math.Pi, math.Pi},
+		{-2 * math.Pi, 0},
+		{3 * math.Pi, math.Pi},
+		{-3 * math.Pi, math.Pi},
+	}
+
+	for i, test := range tests {
+		x := WrapTau(test.x)
+		if !Equalish(x, test.exp, 0.0001) {
+			t.Errorf("%d. Expected %f, got %f", i, test.exp, x)
+		}
+	}
+}
+
+func TestWrapPi(t *testing.T) {
+	tests := []struct {
+		x, exp float64
+	}{
+		{1.23, 1.23},
+		{7.89, 7.89 - math.Pi*2},
+		{17.89, 17.89 - 6*math.Pi},
+		{19.89, 19.89 - 6*math.Pi},
+		{-1.23, -1.23},
+		{-7.89, -7.89 + 2*math.Pi},
+		{-17.89, 3*Tau - 17.89},
+		{0, 0},
+		{Tau, 0},
+		{-Tau, 0},
+		{2 * Tau, 0},
+		{-2 * Tau, 0},
+		{20 * Tau, 0},
+		{-20 * Tau, 0},
+		{math.Pi, -math.Pi},
+		{2 * math.Pi, 0},
+		{-math.Pi, -math.Pi},
+		{-2 * math.Pi, 0},
+		{3 * math.Pi, -math.Pi},
+		{-3 * math.Pi, -math.Pi},
+	}
+
+	for i, test := range tests {
+		x := WrapPi(test.x)
+		if !Equalish(x, test.exp, 0.0001) {
+			t.Errorf("%d. Expected %f, got %f", i, test.exp, x)
+		}
+	}
 }

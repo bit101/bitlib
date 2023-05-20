@@ -35,18 +35,18 @@ func Map(srcValue float64, srcMin float64, srcMax float64, dstMin float64, dstMa
 	return Lerp(norm, dstMin, dstMax)
 }
 
-// Wrap wraps a value around so it remains between min and max.
+// Wrap wraps a value around so it remains between min (inclusive) and max (exclusive).
 func Wrap(value float64, min float64, max float64) float64 {
-	r := max - min
-	return min + math.Mod((math.Mod(value-min, r)+r), r)
+	rng := max - min
+	return min + math.Mod((math.Mod(value-min, rng)+rng), rng)
 }
 
-// WrapTau wraps a number to be within 0 to 2 * Pi
+// WrapTau wraps a number to be within 0 (inclusive) to 2 * Pi (exclusive).
 func WrapTau(value float64) float64 {
-	return Wrap(value, 0, Tau)
+	return math.Mod(math.Mod(value, Tau)+Tau, Tau)
 }
 
-// WrapPi wraps a number to be within -Pi and +Pi
+// WrapPi wraps a number to be within -Pi (inclusive) and +Pi (exclusive).
 func WrapPi(value float64) float64 {
 	return Wrap(value, -math.Pi, math.Pi)
 }

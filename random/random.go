@@ -5,6 +5,8 @@ import (
 	"math"
 	"math/rand"
 	"time"
+
+	"github.com/bit101/bitlib/blmath"
 )
 
 // Seed sets the prng seed.
@@ -27,6 +29,11 @@ func Float() float64 {
 // Int returns a random integer.
 func Int() int {
 	return rand.Int()
+}
+
+// Angle returns a random angle from 0 to 2PI radians.
+func Angle() float64 {
+	return FloatRange(0, blmath.Tau)
 }
 
 // FloatRange returns a random float from min to max.

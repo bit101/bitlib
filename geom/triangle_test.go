@@ -31,7 +31,7 @@ func TestNewTri(t *testing.T) {
 		t.Errorf("Expected %f, got %f\n", 300.0, tri0.PointC.Y)
 	}
 
-	tri1 := NewTriangleXY(100, 100, 200, 100, 100, 300)
+	tri1 := NewTriangle(100, 100, 200, 100, 100, 300)
 	if tri1.PointA.X != 100 {
 		t.Errorf("Expected %f, got %f\n", 100.0, tri0.PointA.X)
 	}
@@ -55,7 +55,7 @@ func TestNewTri(t *testing.T) {
 }
 
 func TestCentroid(t *testing.T) {
-	tri := NewTriangleXY(100, 100, 200, 300, -50, -100)
+	tri := NewTriangle(100, 100, 200, 300, -50, -100)
 	centroid := tri.Centroid()
 
 	if !blmath.Equalish(centroid.X, 83.33333, 0.00001) {
@@ -120,7 +120,7 @@ func TestNewEqTriPoints(t *testing.T) {
 }
 
 func TestArea(t *testing.T) {
-	tri := NewTriangleXY(100, 100, 200, 100, 150, 0)
+	tri := NewTriangle(100, 100, 200, 100, 150, 0)
 	area := tri.Area()
 
 	if area != 5000 {
