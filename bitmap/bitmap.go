@@ -48,11 +48,17 @@ func (c *Bitmap) SetPixel(x, y int, r, g, b float64) {
 	c.Pixels[index+2] = clamp(r)
 }
 
+// SetPixelGray sets the the pixel at the given coords to the gray value given.
+func (c *Bitmap) SetPixelGray(x, y int, val float64) {
+	c.SetPixel(x, y, val, val, val)
+}
+
 // SaveImage saves the bitmap to a file.
 func (c *Bitmap) SaveImage(filename string) {
 	EncodeBmp(c.Pixels, c.Width, -c.Height, filename)
 }
 
+// clamp clamps a channel value between 0 and 1.
 func clamp(val float64) float64 {
 	return math.Min(1.0, math.Max(0.0, val))
 }
