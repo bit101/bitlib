@@ -9,26 +9,28 @@ import (
 	"github.com/bit101/bitlib/blmath"
 )
 
+var generator = rand.New(rand.NewSource(int64(time.Now().Nanosecond())))
+
 // Seed sets the prng seed.
 func Seed(seed int64) {
-	rand.Seed(seed)
+	generator = rand.New(rand.NewSource(seed))
 }
 
 // RandSeed seeds the prng with a random seed.
 func RandSeed() int64 {
 	seed := int64(time.Now().Nanosecond())
-	rand.Seed(seed)
+	generator = rand.New(rand.NewSource(seed))
 	return seed
 }
 
 // Float returns a random float from 0.0 to 1.0.
 func Float() float64 {
-	return rand.Float64()
+	return generator.Float64()
 }
 
 // Int returns a random integer.
 func Int() int {
-	return rand.Int()
+	return generator.Int()
 }
 
 // Angle returns a random angle from 0 to 2PI radians.
@@ -38,7 +40,7 @@ func Angle() float64 {
 
 // FloatRange returns a random float from min to max.
 func FloatRange(min float64, max float64) float64 {
-	return min + rand.Float64()*(max-min)
+	return min + generator.Float64()*(max-min)
 }
 
 // IntRange returns a random int from min to max.
@@ -71,7 +73,7 @@ func Boolean() bool {
 
 // WeightedBool returns a weighted boolean.
 func WeightedBool(weight float64) bool {
-	return rand.Float64() < weight
+	return generator.Float64() < weight
 }
 
 // Power returns a random number raised to a power.
@@ -89,12 +91,12 @@ func GaussRange(min, max float64) float64 {
 	// for 100,000 samples, that's around 6 outside the range. better.
 	// so we get the standard deviation by dividing the range by 4.0
 	std := rng / 4.0
-	return rand.NormFloat64()*std + mean
+	return generator.NormFloat64()*std + mean
 }
 
 // Norm returns a random number within a normal distrubution with the given mean and standard deviation.
 func Norm(mean, std float64) float64 {
-	return rand.NormFloat64()*std + mean
+	return generator.NormFloat64()*std + mean
 }
 
 // String returns a random string.

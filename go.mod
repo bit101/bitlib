@@ -1,4 +1,4 @@
 module github.com/bit101/bitlib
 
-go 1.18
+go 1.21.1
 
