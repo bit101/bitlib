@@ -125,7 +125,7 @@ func HSLA(h, s, l, a float64) Color {
 	return c
 }
 
-// CYMK creates a color struct using cyan, yellow, magenta and black.
+// CMYK creates a color struct using cyan, yellow, magenta and black.
 func CMYK(c, m, y, k float64) Color {
 	c /= 100.0
 	m /= 100.0
