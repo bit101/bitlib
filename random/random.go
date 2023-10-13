@@ -9,14 +9,30 @@ import (
 	"github.com/bit101/bitlib/blmath"
 )
 
+// You can use the random package in two ways now.
+// 1. Call the methods directly as exported functions from the package.
+// example:
+//	 random.FloatRange(0, width)
+//
+// 2. Create an instance of random.Random and call methods on that object.
+// example:
+//	 r = random.NewRandom()
+//   r.FloatRange(0, width)
+//
+// Using method 2, you can have different random generators with different seeds,
+// unaffected by calls to the others.
+
+// Random represents a single unique PRNG
 type Random struct {
 	rng *rand.Rand
 }
 
+// NewRandom creates a new Random instance.
 func NewRandom() *Random {
 	return &Random{rand.New(rand.NewSource(int64(time.Now().Nanosecond())))}
 }
 
+// rng is the default PRNG when method names are called directly via the package.
 var rng = NewRandom()
 
 // Seed sets the prng seed.
@@ -242,4 +258,21 @@ func (r *Random) StringAlpha(length int) string {
 		s += string(c)
 	}
 	return s
+}
+
+// WeightedIndex returns a random int based on an array of weights.
+func (r Random) WeightedIndex(weights []float64) int {
+	total := 0.0
+	for _, w := range weights {
+		total += w
+	}
+	n := r.FloatRange(0, total)
+
+	for i, w := range weights {
+		if n < w {
+			return i
+		}
+		n -= w
+	}
+	return -1 // should never happen
 }

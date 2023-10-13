@@ -2,6 +2,7 @@
 package blmath
 
 import (
+	"log"
 	"math"
 )
 
@@ -33,6 +34,40 @@ func Lerp(t float64, min float64, max float64) float64 {
 func Map(srcValue float64, srcMin float64, srcMax float64, dstMin float64, dstMax float64) float64 {
 	norm := Norm(srcValue, srcMin, srcMax)
 	return Lerp(norm, dstMin, dstMax)
+}
+
+// MapLinExp maps a value within a linear min/max range to another exponential range.
+// min and max values will be swapped if min is greater than max.
+// The resulting dstMin value cannot be 0.
+func MapLinExp(srcValue, srcMin, srcMax, dstMin, dstMax float64) float64 {
+	if dstMin == 0 {
+		log.Fatal("blmath.MapLinExp: dstMin parameter cannot be 0")
+	}
+	if srcMin > srcMax {
+		srcMin, srcMax = srcMax, srcMin
+	}
+	if dstMin > dstMax {
+		dstMin, dstMax = dstMax, dstMin
+	}
+	// taken from SuperCollider's linexp function
+	return math.Pow(dstMax/dstMin, (srcValue-srcMin)/(srcMax-srcMin)) * dstMin
+}
+
+// MapExpLin maps a value within an exponential min/max range to another linear range.
+// min and max values will be swapped if min is greater than max.
+// The resulting srcMin value cannot be 0.
+func MapExpLin(srcValue, srcMin, srcMax, dstMin, dstMax float64) float64 {
+	if srcMin == 0 {
+		log.Fatal("blmath.MapExpLin: srcMin parameter cannot be 0")
+	}
+	if srcMin > srcMax {
+		srcMin, srcMax = srcMax, srcMin
+	}
+	if dstMin > dstMax {
+		dstMin, dstMax = dstMax, dstMin
+	}
+	// taken from SuperCollider's explin function
+	return (math.Log(srcValue/srcMin))/(math.Log(srcMax/srcMin))*(dstMax-dstMin) + dstMin
 }
 
 // Wrap wraps a value around so it remains between min (inclusive) and max (exclusive).
@@ -101,7 +136,8 @@ func Fract(n float64) float64 {
 
 // LerpSin maps a normal value to min and max values with a sine wave.
 func LerpSin(value, min, max float64) float64 {
-	return SinRange(value*math.Pi*2, min, max)
+	// subtracting pi/2 makes value 0 and 1 return min. value 0.5 will return max.
+	return SinRange(value*math.Pi*2-math.Pi/2, min, max)
 }
 
 // Equalish returns whether the two values are approximately equal.
