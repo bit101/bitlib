@@ -637,3 +637,27 @@ func TestWrapPi(t *testing.T) {
 		}
 	}
 }
+
+func TestDigRoot(t *testing.T) {
+	tests := []struct {
+		x, exp int
+	}{
+		{1, 1},
+		{0, 0},
+		{11, 2},
+		{44, 8},
+		{55, 1},
+		{59, 5},
+		{123, 6},
+		{923, 5},
+		{999888777, 9},
+		{999888778, 1},
+	}
+
+	for i, test := range tests {
+		x := DigRoot(test.x)
+		if x != test.exp {
+			t.Errorf("%d. Expected %d, got %d", i, x, test.exp)
+		}
+	}
+}

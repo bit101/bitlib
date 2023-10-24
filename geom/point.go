@@ -142,6 +142,22 @@ func (p *Point) Scale(scaleX float64, scaleY float64) {
 	p.Y *= scaleY
 }
 
+// UniScale scales this point by the same amount on the x and y axes.
+func (p *Point) UniScale(scale float64) {
+	p.X *= scale
+	p.Y *= scale
+}
+
+// Scaled creates a new point, a scaled version of this point.
+func (p *Point) Scaled(scaleX float64, scaleY float64) *Point {
+	return NewPoint(p.X*scaleX, p.Y*scaleY)
+}
+
+// UniScaled creates a new point, a scaled version of this point.
+func (p *Point) UniScaled(scale float64) *Point {
+	return NewPoint(p.X*scale, p.Y*scale)
+}
+
 // Rotate rotates this point around the origin.
 func (p *Point) Rotate(angle float64) {
 	x := p.X*math.Cos(angle) + p.Y*math.Sin(angle)

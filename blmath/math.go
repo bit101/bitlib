@@ -238,3 +238,18 @@ func ModPosInt(a, b int) int {
 	}
 	return val
 }
+
+// DigRoot returns the digital root of a number,
+// which is the sum of the numbers digits,
+// repeated until it yields a single digit.
+func DigRoot(value int) int {
+	for value > 9 {
+		total := 0
+		for value > 0 {
+			total += (value % 10)
+			value = value / 10
+		}
+		value = total
+	}
+	return value
+}

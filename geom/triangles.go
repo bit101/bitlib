@@ -156,3 +156,11 @@ func (t *Triangle) Contains(p *Point) bool {
 
 	return !(hasCCW && hasCW)
 }
+
+func (t *Triangle) Scaled(factor float64) *Triangle {
+	return NewTriangle(
+		t.PointA.X*factor, t.PointA.Y*factor,
+		t.PointB.X*factor, t.PointB.Y*factor,
+		t.PointC.X*factor, t.PointC.Y*factor,
+	)
+}

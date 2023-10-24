@@ -16,6 +16,30 @@ func VectorBetween(x0, y0, x1, y1 float64) *Vector {
 	}
 }
 
+// VectorFromPoints returns the vector between two points.
+func VectorFromPoints(p0, p1 *Point) *Vector {
+	return &Vector{
+		U: p1.X - p0.X,
+		V: p1.Y - p0.Y,
+	}
+}
+
+// Add adds another vector to this vector returning the result.
+func (v *Vector) Add(w *Vector) *Vector {
+	return &Vector{
+		U: v.U + w.U,
+		V: v.V + w.V,
+	}
+}
+
+// Subtract subtracts another vector from this vector returning the result.
+func (v *Vector) Subtract(w *Vector) *Vector {
+	return &Vector{
+		U: v.U - w.U,
+		V: v.V - w.V,
+	}
+}
+
 // DotProduct returns the dot product between this and another vector.
 func (v *Vector) DotProduct(w *Vector) float64 {
 	return v.U*w.U + v.V*w.V

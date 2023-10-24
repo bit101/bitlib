@@ -260,6 +260,16 @@ func (r *Random) StringAlpha(length int) string {
 	return s
 }
 
+// StringFrom returns a random string of characters from the source string.
+func (r *Random) StringFrom(length int, chars string) string {
+	s := ""
+	for i := 0; i < length; i++ {
+		index := IntRange(0, len(chars))
+		s += string(chars[index])
+	}
+	return s
+}
+
 // WeightedIndex returns a random int based on an array of weights.
 func (r Random) WeightedIndex(weights []float64) int {
 	total := 0.0
