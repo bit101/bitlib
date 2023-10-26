@@ -20,7 +20,12 @@ type Color struct {
 
 // RGB creates a new Color struct with rgb values from 0.0 to 1.0 each (a = 1.0).
 func RGB(r float64, g float64, b float64) Color {
-	return Color{r, g, b, 1.0}
+	return Color{
+		blmath.Clamp(r, 0, 1),
+		blmath.Clamp(g, 0, 1),
+		blmath.Clamp(b, 0, 1),
+		1.0,
+	}
 }
 
 // RGBA creates a new Color struct with rgba values from 0.0 to 1.0 each.

@@ -3,7 +3,17 @@ package blcolor
 
 import (
 	"math"
+
+	"github.com/bit101/bitlib/blmath"
 )
+
+// Equals returns whether or not this color is equal to another channel.
+func (c Color) Equals(colorB Color) bool {
+	return blmath.Equalish(c.R, colorB.R, 0.00001) &&
+		blmath.Equalish(c.G, colorB.G, 0.00001) &&
+		blmath.Equalish(c.B, colorB.B, 0.00001) &&
+		blmath.Equalish(c.A, colorB.A, 0.00001)
+}
 
 // ColorDiff returns the euclidian distance between two colors.
 func (c Color) ColorDiff(colorB Color) float64 {
@@ -206,4 +216,27 @@ func (c Color) ToCMYK() (float64, float64, float64, float64) {
 	m := (1.0 - c.G - k) / (1.0 - k)
 	y := (1.0 - c.B - k) / (1.0 - k)
 	return cy * 100, m * 100, y * 100, k * 100
+}
+
+// Quant quantizes each color channel into a specified number of bands.
+func (c Color) Quant(quant int) Color {
+	return RGB(
+		quantChannel(c.R, quant),
+		quantChannel(c.G, quant),
+		quantChannel(c.B, quant),
+	)
+}
+
+// AddRGB adds a value to each channel, returning a new Color.
+func (c Color) AddRGB(r, g, b float64) Color {
+	return RGB(c.R+r, c.G+g, c.B+b)
+}
+
+// AddColor adds a Color to this Color, returning a new Color.
+func (c Color) AddColor(b Color) Color {
+	return RGB(c.R+b.R, c.G+b.G, c.B+b.B)
+}
+
+func quantChannel(value float64, quant int) float64 {
+	return blmath.Clamp(math.Floor(value*float64(quant))/float64(quant-1), 0, 1)
 }
