@@ -113,6 +113,28 @@ func SegmentOnRect(x0, y0, x1, y1, rx, ry, rw, rh float64) bool {
 	return false
 }
 
+// LineOnRect returns the points of intersection from a line to a rect (if any).
+func LineOnRect(lineX1, lineY1, lineX2, lineY2, rectX, rectY, rectW, rectH float64) []*Point {
+	points := []*Point{}
+	x, y, hit := SegmentOnLine(rectX, rectY, rectX+rectW, rectY, lineX1, lineY1, lineX2, lineY2)
+	if hit {
+		points = append(points, NewPoint(x, y))
+	}
+	x, y, hit = SegmentOnLine(rectX+rectW, rectY, rectX+rectW, rectY+rectH, lineX1, lineY1, lineX2, lineY2)
+	if hit {
+		points = append(points, NewPoint(x, y))
+	}
+	x, y, hit = SegmentOnLine(rectX+rectW, rectY+rectH, rectX, rectY+rectH, lineX1, lineY1, lineX2, lineY2)
+	if hit {
+		points = append(points, NewPoint(x, y))
+	}
+	x, y, hit = SegmentOnLine(rectX, rectY+rectH, rectX, rectY, lineX1, lineY1, lineX2, lineY2)
+	if hit {
+		points = append(points, NewPoint(x, y))
+	}
+	return points
+}
+
 // PointDistanceToSegment reports the distance from a point to a line segment
 func PointDistanceToSegment(px, py, x0, y0, x1, y1 float64) float64 {
 	// https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment

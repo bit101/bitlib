@@ -15,6 +15,16 @@ const Tau = math.Pi * 2
 // HalfPi pi / 2
 const HalfPi = math.Pi / 2
 
+// DegToRad converts a degree value to radians.
+func DegToRad(d float64) float64 {
+	return d * math.Pi / 180.0
+}
+
+// RadToDeg converts a radian value to degrees.
+func RadToDeg(r float64) float64 {
+	return r / math.Pi * 180.0
+}
+
 // Difference returns the absolute value of the difference between two numbers.
 func Difference(a, b float64) float64 {
 	return math.Abs(a - b)
