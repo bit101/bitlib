@@ -82,13 +82,14 @@ func MapExpLin(srcValue, srcMin, srcMax, dstMin, dstMax float64) float64 {
 
 // Wrap wraps a value around so it remains between min (inclusive) and max (exclusive).
 func Wrap(value float64, min float64, max float64) float64 {
-	rng := max - min
-	return min + math.Mod((math.Mod(value-min, rng)+rng), rng)
+	value -= min
+	max -= min
+	return value - max*math.Floor(value/max) + min
 }
 
 // WrapTau wraps a number to be within 0 (inclusive) to 2 * Pi (exclusive).
 func WrapTau(value float64) float64 {
-	return math.Mod(math.Mod(value, Tau)+Tau, Tau)
+	return value - Tau*math.Floor(value/Tau)
 }
 
 // WrapPi wraps a number to be within -Pi (inclusive) and +Pi (exclusive).
