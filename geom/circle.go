@@ -2,6 +2,7 @@
 package geom
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/bit101/bitlib/blmath"
@@ -101,6 +102,20 @@ func InnerCircles(c *Circle, count int, rotation float64) []*Circle {
 		a += angle
 	}
 	return circles
+}
+
+// CircleThroughPointsWithArcHeight returns the center of an arc that goes through two points with the given height.
+func CircleThroughPointsWithArcHeight(x0, y0, x1, y1, height float64) (*Circle, error) {
+	if math.Abs(height) < 0.001 {
+		return nil, fmt.Errorf("Height cannot be zero")
+	}
+	l := math.Hypot(x1-x0, y1-y0)
+	r := (4*height*height + l*l) / (8 * height)
+	a := math.Atan2(y1-y0, x1-x0) + math.Pi/2
+	midx, midy := (x0+x1)/2, (y0+y1)/2
+	x := midx + math.Cos(a)*(r-height)
+	y := midy + math.Sin(a)*(r-height)
+	return NewCircle(x, y, r), nil
 }
 
 // func TangentPointToCircle(point *Point, circle *Circle, anticlockwise bool) *Point {

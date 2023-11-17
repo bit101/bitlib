@@ -72,3 +72,41 @@ func TestInversionXY(t *testing.T) {
 		t.Errorf("Expected %f, got %f\n", ey, y)
 	}
 }
+
+func TestCircleThroughPointsWithHeight(t *testing.T) {
+	x0, y0 := -100.0, 0.0
+	x1, y1 := 100.0, 0.0
+	height := 100.0
+	circle, err := CircleThroughPointsWithArcHeight(x0, y0, x1, y1, height)
+	if err != nil {
+		t.Error("Should not produce error")
+	}
+	if circle.X != 0 || circle.Y != 0 || circle.Radius != 100 {
+		t.Errorf("Expected circle: x: %f, y: %f, r: %f. Got x: %f, y:%f, r: %f", 0.0, 0.0, 100.0, circle.X, circle.Y, circle.Radius)
+	}
+
+	x0, y0 = -50.0, 0.0
+	x1, y1 = 50.0, 0.0
+	height = 100.0
+	circle, err = CircleThroughPointsWithArcHeight(x0, y0, x1, y1, height)
+	if err != nil {
+		t.Error("Should not produce error")
+	}
+	if !blmath.Equalish(circle.X, 0, 0.0001) {
+		t.Errorf("Expected circle.X: %f, got: %f", 0.0, circle.X)
+	}
+	if !blmath.Equalish(circle.Y, -37.5, 0.0001) {
+		t.Errorf("Expected circle.Y: %f, got: %f", 0.0, circle.X)
+	}
+	if !blmath.Equalish(circle.Radius, 62.5, 0.0001) {
+		t.Errorf("Expected circle.Radius: %f, got: %f", 62.5, circle.Radius)
+	}
+
+	x0, y0 = -50.0, 0.0
+	x1, y1 = 50.0, 0.0
+	height = 0.0
+	circle, err = CircleThroughPointsWithArcHeight(x0, y0, x1, y1, height)
+	if err == nil {
+		t.Error("Zero height should create an error")
+	}
+}
