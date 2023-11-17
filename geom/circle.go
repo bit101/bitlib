@@ -104,9 +104,10 @@ func InnerCircles(c *Circle, count int, rotation float64) []*Circle {
 	return circles
 }
 
-// CircleThroughPointsWithArcHeight returns the center of an arc that goes through two points with the given height.
+// CircleThroughPointsWithArcHeight returns the circle that passes through the two points
+// and creates an arc of the given height through those points.
 func CircleThroughPointsWithArcHeight(x0, y0, x1, y1, height float64) (*Circle, error) {
-	if math.Abs(height) < 0.001 {
+	if math.Abs(height) < 0.000001 {
 		return nil, fmt.Errorf("Height cannot be zero")
 	}
 	l := math.Hypot(x1-x0, y1-y0)
