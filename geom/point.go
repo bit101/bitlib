@@ -40,7 +40,7 @@ func RandomPointInRect(x, y, w, h float64) *Point {
 }
 
 // RandomPointInCircle creates a random point within the defined circle.
-// if dist is true, it will evenly distrubute them in the circle.
+// if dist is true, it will evenly distribute them in the circle.
 func RandomPointInCircle(x, y, r float64, dist bool) *Point {
 	var radius float64
 	angle := random.FloatRange(0, math.Pi*2)

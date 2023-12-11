@@ -156,7 +156,7 @@ func Simplex1(x float64) float64 {
 	// The maximum value of this noise is 8*(3/4)^4 = 2.53125
 	// A factor of 0.395 would scale to fit exactly within [-1,1].
 	// fmt.Printf("Noise1 x %.4f, i0 %v, i1 %v, x0 %.4f, x1 %.4f, perm0 %d, perm1 %d: %.4f,%.4f\n", x, i0, i1, x0, x1, perm[i0&0xff], perm[i1&0xff], n0, n1)
-	// The algorithm isn't perfect, as it is assymetric. The correction will normalize the result to the interval [-1,1], but the average will be off by 3%.
+	// The algorithm isn't perfect, as it is asymmetric. The correction will normalize the result to the interval [-1,1], but the average will be off by 3%.
 	return (n0 + n1 + 0.076368899) / 2.45488110001
 }
 

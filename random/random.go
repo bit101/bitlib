@@ -100,7 +100,7 @@ func GaussRange(min, max float64) float64 {
 	return rng.GaussRange(min, max)
 }
 
-// Norm returns a random number within a normal distrubution with the given mean and standard deviation.
+// Norm returns a random number within a normal distribution with the given mean and standard deviation.
 func Norm(mean, std float64) float64 {
 	return rng.Norm(mean, std)
 }
@@ -218,7 +218,7 @@ func (r *Random) GaussRange(min, max float64) float64 {
 	return r.Norm(mean, std)
 }
 
-// Norm returns a random number within a normal distrubution with the given mean and standard deviation.
+// Norm returns a random number within a normal distribution with the given mean and standard deviation.
 func (r *Random) Norm(mean, std float64) float64 {
 	return r.rng.NormFloat64()*std + mean
 }
