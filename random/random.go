@@ -161,6 +161,12 @@ func (r *Random) FloatRange(min float64, max float64) float64 {
 	return min + r.Float()*(max-min)
 }
 
+// Around returns a random float around a given number.
+// val is the center. amt is how much on either side the result will vary.
+func Around(val, amt float64) float64 {
+	return val + FloatRange(-amt, amt)
+}
+
 // IntRange returns a random int from min to max.
 func (r *Random) IntRange(min int, max int) int {
 	return int(r.FloatRange(float64(min), float64(max)))
@@ -285,4 +291,16 @@ func (r Random) WeightedIndex(weights []float64) int {
 		n -= w
 	}
 	return -1 // should never happen
+}
+
+// Complex returns a random complex number from -1 + -1i to 1 + 1i
+func (r Random) Complex() complex128 {
+	return r.ComplexRange(-1, 1, -1, 1)
+}
+
+// ComplexRange returns a random complex number in the given ranges.
+func (r Random) ComplexRange(realMin, realMax, imagMin, imagMax float64) complex128 {
+	rr := r.FloatRange(realMin, realMax)
+	ri := r.FloatRange(imagMin, imagMax)
+	return complex(rr, ri)
 }
