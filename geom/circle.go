@@ -119,6 +119,30 @@ func CircleThroughPointsWithArcHeight(x0, y0, x1, y1, height float64) (*Circle, 
 	return NewCircle(x, y, r), nil
 }
 
+// CircleTouchingCircle returns a new circle that exactly touches another circle at a given angle.
+func CircleTouchingCircle(c0 *Circle, angle, radius float64) *Circle {
+	x := c0.X + math.Cos(angle)*(c0.Radius+radius)
+	y := c0.Y + math.Sin(angle)*(c0.Radius+radius)
+	return NewCircle(x, y, radius)
+}
+
+// CircleTouchingTwoCircles returns a new circle that exactly touches the other two circles.
+func CircleTouchingTwoCircles(c0, c1 *Circle, radius float64, clockwise bool) *Circle {
+	a := c0.Radius + c1.Radius
+	b := c0.Radius + radius
+	c := c1.Radius + radius
+	offset := AngleFromTriangleSideLengths(a, b, c)
+	angle := math.Atan2(c1.Y-c0.Y, c1.X-c0.X)
+	if clockwise {
+		angle = angle + offset
+	} else {
+		angle = angle - offset
+	}
+
+	return CircleTouchingCircle(c0, angle, radius)
+
+}
+
 // func TangentPointToCircle(point *Point, circle *Circle, anticlockwise bool) *Point {
 // 	d := math.Hypot(c.X-point.X, c.Y-point.Y)
 // 	dir := -1.0

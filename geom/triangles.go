@@ -53,6 +53,12 @@ func EquilateralTriangleFromTwoPoints(p0, p1 *Point, clockwise bool) *Triangle {
 	return NewTriangleFromPoints(p0, p1, p2)
 }
 
+// AngleFromTriangleSideLengths returns one angle of a triangle where the lengths of each side are known.
+// It returns the angle between a and b.
+func AngleFromTriangleSideLengths(a, b, c float64) float64 {
+	return math.Acos((a*a + b*b - c*c) / (2 * a * b))
+}
+
 // Centroid returns the centroid of a triangle.
 func (t *Triangle) Centroid() *Point {
 	midA := LerpPoint(0.5, t.PointB, t.PointC)
