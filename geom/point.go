@@ -80,6 +80,34 @@ func (p *PointList) AddXY(x, y float64) {
 	*p = append(*p, NewPoint(x, y))
 }
 
+// Rotate rotates all the points in a list.
+func (p *PointList) Rotate(angle float64) {
+	for _, point := range *p {
+		point.Rotate(angle)
+	}
+}
+
+// Translate translates all the points in a list.
+func (p *PointList) Translate(x, y float64) {
+	for _, point := range *p {
+		point.Translate(x, y)
+	}
+}
+
+// Scale scales all the points in a list.
+func (p *PointList) Scale(sx, sy float64) {
+	for _, point := range *p {
+		point.Scale(sx, sy)
+	}
+}
+
+// Randomize randomizes all the points in a list.
+func (p *PointList) Randomize(rx, ry float64) {
+	for _, point := range *p {
+		point.Translate(random.FloatRange(-rx, rx), random.FloatRange(-ry, ry))
+	}
+}
+
 // Coords returns the x, y coords of this point.
 func (p *Point) Coords() (float64, float64) {
 	return p.X, p.Y
