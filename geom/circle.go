@@ -143,18 +143,20 @@ func CircleTouchingTwoCircles(c0, c1 *Circle, radius float64, clockwise bool) *C
 
 }
 
-// func TangentPointToCircle(point *Point, circle *Circle, anticlockwise bool) *Point {
-// 	d := math.Hypot(c.X-point.X, c.Y-point.Y)
-// 	dir := -1.0
-// 	if anticlockwise {
-// 		dir = 1.0
-// 	}
-// 	angle := math.Cos(-circle.Radius/d) * dir
-// 	baseAngle := math.Atan2(circle.Center.Y-point.Y, circle.Center.X-point.X)
-// 	totalAngle := baseAngle + angle
+// TangentSegmentToCircles returns a line segment that forms a tangent
+// to the two given circles. There can be two such segments. The sign
+// parameter (positive or negative) allows you to choose which one.
+func TangentSegmentToCircles(c0, c1 *Circle, sign float64) *Segment {
+	dist := math.Hypot(c1.X-c0.X, c1.Y-c0.Y)
+	angle1 := math.Atan2(c1.Y-c0.Y, c1.X-c0.X)
+	r := c1.Radius - c0.Radius
+	angle2 := math.Asin(r / dist)
+	s := math.Copysign(1, sign)
+	angle3 := angle1 + (angle2+math.Pi/2)*s
+	x0 := c0.X + math.Cos(angle3)*c0.Radius
+	y0 := c0.Y + math.Sin(angle3)*c0.Radius
 
-// 	return &Point{
-// 		circle.Center.X + math.Cos(totalAngle)*circle.Radius,
-// 		circle.Center.Y + math.Sin(totalAngle)*circle.Radius,
-// 	}
-// }
+	x1 := c1.X + math.Cos(angle3)*c1.Radius
+	y1 := c1.Y + math.Sin(angle3)*c1.Radius
+	return NewSegment(x0, y0, x1, y1)
+}

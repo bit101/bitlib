@@ -79,3 +79,8 @@ func (v *Vector) Scaled(factor float64) *Vector {
 func (v *Vector) Project(w *Vector) float64 {
 	return v.DotProduct(w.Normalized())
 }
+
+// Angle returns the angle of this vector.
+func (v *Vector) Angle() float64 {
+	return math.Atan2(v.V, v.U)
+}

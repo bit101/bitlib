@@ -104,8 +104,13 @@ func (p *PointList) Scale(sx, sy float64) {
 // Randomize randomizes all the points in a list.
 func (p *PointList) Randomize(rx, ry float64) {
 	for _, point := range *p {
-		point.Translate(random.FloatRange(-rx, rx), random.FloatRange(-ry, ry))
+		point.Randomize(rx, ry)
 	}
+}
+
+// Randomize randomizes all this point.
+func (p *Point) Randomize(rx, ry float64) {
+	p.Translate(random.FloatRange(-rx, rx), random.FloatRange(-ry, ry))
 }
 
 // Coords returns the x, y coords of this point.
