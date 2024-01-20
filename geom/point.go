@@ -62,67 +62,6 @@ func RandomPointInTriangle(A, B, C *Point) *Point {
 	return NewPoint(a*A.X+b*B.X+c*C.X, a*A.Y+b*B.Y+c*C.Y)
 }
 
-// PointList is a slice of Points
-type PointList []*Point
-
-// NewPointList creates a new point list
-func NewPointList() PointList {
-	return PointList{}
-}
-
-// Add adds a point to the list
-func (p *PointList) Add(point *Point) {
-	*p = append(*p, point)
-}
-
-// AddXY adds a point to the list
-func (p *PointList) AddXY(x, y float64) {
-	*p = append(*p, NewPoint(x, y))
-}
-
-// Rotate rotates all the points in a list.
-func (p *PointList) Rotate(angle float64) {
-	for _, point := range *p {
-		point.Rotate(angle)
-	}
-}
-
-// Translate translates all the points in a list.
-func (p *PointList) Translate(x, y float64) {
-	for _, point := range *p {
-		point.Translate(x, y)
-	}
-}
-
-// Scale scales all the points in a list.
-func (p *PointList) Scale(sx, sy float64) {
-	for _, point := range *p {
-		point.Scale(sx, sy)
-	}
-}
-
-// Randomize randomizes all the points in a list.
-func (p *PointList) Randomize(rx, ry float64) {
-	for _, point := range *p {
-		point.Randomize(rx, ry)
-	}
-}
-
-// PointListCullTest is a function that takes a point and returns a bool.
-// Used for culling points from a list.
-type PointListCullTest func(*Point) bool
-
-// Cull returns a new point list of points from this list that match a test
-func (p PointList) Cull(test PointListCullTest) PointList {
-	out := NewPointList()
-	for _, point := range p {
-		if test(point) {
-			out.Add(point)
-		}
-	}
-	return out
-}
-
 // Randomize randomizes all this point.
 func (p *Point) Randomize(rx, ry float64) {
 	p.Translate(random.FloatRange(-rx, rx), random.FloatRange(-ry, ry))
@@ -190,6 +129,14 @@ func (p *Point) Scale(scaleX float64, scaleY float64) {
 	p.Y *= scaleY
 }
 
+// ScaleFrom scales this point on the x and y axes, with the given x, y location as a center.
+func (p *Point) ScaleFrom(x, y, scaleX float64, scaleY float64) {
+	p.Translate(-x, -y)
+	p.X *= scaleX
+	p.Y *= scaleY
+	p.Translate(x, y)
+}
+
 // UniScale scales this point by the same amount on the x and y axes.
 func (p *Point) UniScale(scale float64) {
 	p.X *= scale
@@ -214,32 +161,18 @@ func (p *Point) Rotate(angle float64) {
 	p.Y = y
 }
 
+// RotateFrom rotates this point around the the given x, y origin point.
+func (p *Point) RotateFrom(x, y float64, angle float64) {
+	p.Translate(-x, -y)
+
+	x1 := p.X*math.Cos(angle) + p.Y*math.Sin(angle)
+	y1 := p.Y*math.Cos(angle) - p.X*math.Sin(angle)
+	p.X = x1
+	p.Y = y1
+	p.Translate(x, y)
+}
+
 // Clockwise returns whether or not the three points listed are in clockwise order
 func Clockwise(p1, p2, p3 *Point) bool {
 	return (p1.X-p3.X)*(p2.Y-p3.Y)-(p2.X-p3.X)*(p1.Y-p3.Y) > 0
-}
-
-// ConvexHull returns a list of points that form a convex hull around the given set of points.
-func ConvexHull(points PointList) PointList {
-	hull := NewPointList()
-	pointOnHull := points[0]
-	for _, p := range points {
-		if p.X < pointOnHull.X {
-			pointOnHull = p
-		}
-	}
-	for true {
-		hull.Add(pointOnHull)
-		endpoint := points[0]
-		for _, p := range points {
-			if endpoint == pointOnHull || Clockwise(p, endpoint, pointOnHull) {
-				endpoint = p
-			}
-		}
-		pointOnHull = endpoint
-		if endpoint == hull[0] {
-			break
-		}
-	}
-	return hull
 }
