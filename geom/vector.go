@@ -84,3 +84,8 @@ func (v *Vector) Project(w *Vector) float64 {
 func (v *Vector) Angle() float64 {
 	return math.Atan2(v.V, v.U)
 }
+
+// Magnitude returns the magnitude (length) of this vector.
+func (v *Vector) Magnitude() float64 {
+	return math.Hypot(v.U, v.V)
+}

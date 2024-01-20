@@ -50,9 +50,27 @@ func (l *Line) DistanceTo(p *Point) float64 {
 	return l.ClosestPoint(p).Distance(p)
 }
 
+// Angle returns the angle of rthis line (from the first point to the second)
+func (l *Line) Angle() float64 {
+	return math.Atan2(l.Y1-l.Y0, l.X1-l.X0) - math.Pi/2
+}
+
 // Perpendicular returns a line that is perpendicular to the line and crosses through the given point.
 func (l *Line) Perpendicular(p *Point) *Line {
 	dx := l.X1 - l.X0
 	dy := l.Y1 - l.Y0
 	return NewLine(p.X, p.Y, p.X-dy, p.Y+dx)
+}
+
+func (l *Line) Parallel(dist float64) *Line {
+	angle := l.Angle()
+	cos := math.Cos(angle)
+	sin := math.Sin(angle)
+	return NewLine(
+		l.X0+cos*dist,
+		l.Y0+sin*dist,
+		l.X1+cos*dist,
+		l.Y1+sin*dist,
+	)
+
 }

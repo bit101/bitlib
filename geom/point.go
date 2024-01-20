@@ -108,6 +108,21 @@ func (p *PointList) Randomize(rx, ry float64) {
 	}
 }
 
+// PointListCullTest is a function that takes a point and returns a bool.
+// Used for culling points from a list.
+type PointListCullTest func(*Point) bool
+
+// Cull returns a new point list of points from this list that match a test
+func (p PointList) Cull(test PointListCullTest) PointList {
+	out := NewPointList()
+	for _, point := range p {
+		if test(point) {
+			out.Add(point)
+		}
+	}
+	return out
+}
+
 // Randomize randomizes all this point.
 func (p *Point) Randomize(rx, ry float64) {
 	p.Translate(random.FloatRange(-rx, rx), random.FloatRange(-ry, ry))
