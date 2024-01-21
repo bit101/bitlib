@@ -8,6 +8,11 @@ type Vector struct {
 	U, V float64
 }
 
+// NewVector returns a new vector with the given components.
+func NewVector(u, v float64) *Vector {
+	return &Vector{U: u, V: v}
+}
+
 // VectorBetween returns the vector between two points.
 func VectorBetween(x0, y0, x1, y1 float64) *Vector {
 	return &Vector{
@@ -88,4 +93,19 @@ func (v *Vector) Angle() float64 {
 // Magnitude returns the magnitude (length) of this vector.
 func (v *Vector) Magnitude() float64 {
 	return math.Hypot(v.U, v.V)
+}
+
+// Abs returns the absolute value (taken component-wise) of this vector.
+func (v *Vector) Abs() *Vector {
+	return NewVector(math.Abs(v.U), math.Abs(v.V))
+}
+
+// Max returns the maximum value (taken component-wise) of this vector and another value.
+func (v *Vector) Max(other float64) *Vector {
+	return NewVector(math.Max(v.U, other), math.Max(v.V, other))
+}
+
+// Min returns the minimum value (taken component-wise) of this vector and another value.
+func (v *Vector) Min(other float64) *Vector {
+	return NewVector(math.Min(v.U, other), math.Min(v.V, other))
 }

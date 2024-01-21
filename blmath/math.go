@@ -264,3 +264,35 @@ func DigRoot(value int) int {
 	}
 	return value
 }
+
+// NormalizeFloats normalizes a list of floats to fall within a 0.0 to 1.0 range.
+// It returns the normalized list and does not change the original.
+func NormalizeFloats(list []float64) []float64 {
+	return MapFloats(list, 0, 1)
+}
+
+// MapFloats maps a list of floats to fall within a min/max range
+// It returns the normalized list and does not change the original.
+func MapFloats(list []float64, minVal, maxVal float64) []float64 {
+	min, max := MinMaxFloats(list)
+	result := make([]float64, len(list))
+	for i, v := range list {
+		result[i] = Map(v, min, max, minVal, maxVal)
+	}
+	return result
+}
+
+// MinMaxFloats returns the minimum and maximum values in a list of floats.
+func MinMaxFloats(list []float64) (float64, float64) {
+	min := math.MaxFloat64
+	max := -math.MaxFloat64
+	for _, v := range list {
+		if v < min {
+			min = v
+		}
+		if v > max {
+			max = v
+		}
+	}
+	return min, max
+}
