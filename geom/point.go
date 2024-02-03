@@ -143,6 +143,12 @@ func (p *Point) UniScale(scale float64) {
 	p.Y *= scale
 }
 
+// UniScaleFrom scales this point by the same amount on the x and y axes,
+// given the x, y location as a center
+func (p *Point) UniScaleFrom(x, y, scale float64) {
+	p.ScaleFrom(x, y, scale, scale)
+}
+
 // Scaled creates a new point, a scaled version of this point.
 func (p *Point) Scaled(scaleX float64, scaleY float64) *Point {
 	return NewPoint(p.X*scaleX, p.Y*scaleY)

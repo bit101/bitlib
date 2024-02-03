@@ -70,6 +70,47 @@ func (c *Circle) InvertXY(x, y float64) (float64, float64) {
 	return c.X + dx*ratio, c.Y + dy*ratio
 }
 
+// Rotate rotates a circle around the origin.
+func (c *Circle) Rotate(angle float64) {
+	x := c.X*math.Cos(angle) + c.Y*math.Sin(angle)
+	y := c.Y*math.Cos(angle) - c.X*math.Sin(angle)
+	c.X = x
+	c.Y = y
+}
+
+// RotateFrom rotates a circle around the given x, y location.
+func (c *Circle) RotateFrom(x, y float64, angle float64) {
+	c.Translate(-x, -y)
+
+	x1 := c.X*math.Cos(angle) + c.Y*math.Sin(angle)
+	y1 := c.Y*math.Cos(angle) - c.X*math.Sin(angle)
+	c.X = x1
+	c.Y = y1
+	c.Translate(x, y)
+}
+
+// Translate moves this circle on the x and y axes.
+func (c *Circle) Translate(x float64, y float64) {
+	c.X += x
+	c.Y += y
+}
+
+// Scale scales this circle on the x and y axes, as well as its size.
+func (c *Circle) Scale(scale float64) {
+	c.X *= scale
+	c.Y *= scale
+	c.Radius *= scale
+}
+
+// ScaleFrom scales this circle on the x and y axes, with the given x, y location as a center.
+func (c *Circle) ScaleFrom(x, y, scale float64) {
+	c.Translate(-x, -y)
+	c.X *= scale
+	c.Y *= scale
+	c.Radius *= scale
+	c.Translate(x, y)
+}
+
 // OuterCircles returns a slice of circles arrange around the outside of the given circle.
 func OuterCircles(c *Circle, count int, rotation float64) []*Circle {
 	circles := make([]*Circle, count)

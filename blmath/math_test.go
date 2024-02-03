@@ -444,7 +444,7 @@ func TestLerpSin(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		result := LerpSin(tc.t, tc.min, tc.max)
+		result := LoopSin(tc.t, tc.min, tc.max)
 		if !Equalish(result, tc.expected, 0.00001) {
 			t.Errorf("Expected %f, got %f\n", tc.expected, result)
 		}

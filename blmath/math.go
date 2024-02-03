@@ -84,12 +84,13 @@ func MapExpLin(srcValue, srcMin, srcMax, dstMin, dstMax float64) float64 {
 func Wrap(value float64, min float64, max float64) float64 {
 	value -= min
 	max -= min
-	return value - max*math.Floor(value/max) + min
+	// Knuth's floored division modulo function (plus min)
+	return min + value - max*math.Floor(value/max)
 }
 
 // WrapTau wraps a number to be within 0 (inclusive) to 2 * Pi (exclusive).
 func WrapTau(value float64) float64 {
-	return value - Tau*math.Floor(value/Tau)
+	return Wrap(value, 0, Tau)
 }
 
 // WrapPi wraps a number to be within -Pi (inclusive) and +Pi (exclusive).
@@ -99,21 +100,10 @@ func WrapPi(value float64) float64 {
 
 // Clamp enforces a value does not go beyond a min/max range.
 func Clamp(value float64, min float64, max float64) float64 {
-	// let min and max be reversed and still work.
-	realMin := min
-	realMax := max
 	if min > max {
-		realMin = max
-		realMax = min
+		min, max = max, min
 	}
-	result := value
-	if value < realMin {
-		result = realMin
-	}
-	if value > realMax {
-		result = realMax
-	}
-	return result
+	return math.Max(min, math.Min(value, max))
 }
 
 // RoundTo rounds a number to the nearest decimal value.
@@ -125,6 +115,13 @@ func RoundTo(value float64, decimal int) float64 {
 // RoundToNearest rounds a number to the nearest multiple of a value.
 func RoundToNearest(value float64, mult float64) float64 {
 	return math.Round(value/mult) * mult
+}
+
+// Quantize quantizes a value in a range into a number of discrete steps in that range.
+func Quantize(val, min, max float64, steps int) float64 {
+	q := math.Max(0, float64(steps-1))
+	mult := (max - min) / q
+	return RoundToNearest(val, mult)
 }
 
 // SinRange returns the sin of an angle mapped to a min/max range.
@@ -145,10 +142,9 @@ func Fract(n float64) float64 {
 	return n - math.Floor(n)
 }
 
-// LerpSin maps a normal value to min and max values with a sine wave.
-func LerpSin(value, min, max float64) float64 {
-	// subtracting pi/2 makes value 0 and 1 return min. value 0.5 will return max.
-	return SinRange(value*math.Pi*2-math.Pi/2, min, max)
+// LoopSin maps a normal value to min and max values with a sine wave.
+func LoopSin(t, min, max float64) float64 {
+	return Map(math.Cos(t*Tau), 1, -1, min, max)
 }
 
 // Equalish returns whether the two values are approximately equal.
