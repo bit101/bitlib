@@ -66,3 +66,25 @@ func (s *Segment) ClosestPoint(p *Point) *Point {
 func (s *Segment) DistanceTo(p *Point) float64 {
 	return s.ClosestPoint(p).Distance(p)
 }
+
+// Equals returns whether or not this segment is roughly equal to another segment.
+func (s *Segment) Equals(other *Segment) bool {
+	if s == other {
+		return true
+	}
+	d := 0.000001
+	if blmath.Equalish(s.X0, other.X0, d) &&
+		blmath.Equalish(s.Y0, other.Y0, d) &&
+		blmath.Equalish(s.X1, other.X1, d) &&
+		blmath.Equalish(s.Y1, other.Y1, d) {
+		return true
+	}
+
+	if blmath.Equalish(s.X0, other.X1, d) &&
+		blmath.Equalish(s.Y0, other.Y1, d) &&
+		blmath.Equalish(s.X1, other.X0, d) &&
+		blmath.Equalish(s.Y1, other.Y0, d) {
+		return true
+	}
+	return false
+}

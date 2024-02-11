@@ -110,3 +110,35 @@ func TestCircleThroughPointsWithHeight(t *testing.T) {
 		t.Error("Zero height should create an error")
 	}
 }
+
+func TestCircleContains(t *testing.T) {
+	// contains
+	c := NewCircle(200, 200, 100)
+	p := NewPoint(130, 130)
+	b := c.Contains(p)
+	if !b {
+		t.Errorf("Expected %t, got %t\n", false, b)
+	}
+
+	// does not contain
+	p = NewPoint(120, 120)
+	b = c.Contains(p)
+	if b {
+		t.Errorf("Expected %t, got %t\n", true, b)
+	}
+
+	// does not contain
+	p = NewPoint(130, 120)
+	b = c.Contains(p)
+	if b {
+		t.Errorf("Expected %t, got %t\n", true, b)
+	}
+
+	// does not contain
+	p = NewPoint(120, 130)
+	b = c.Contains(p)
+	if b {
+		t.Errorf("Expected %t, got %t\n", true, b)
+	}
+
+}

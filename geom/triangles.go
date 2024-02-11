@@ -2,6 +2,7 @@
 package geom
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/bit101/bitlib/blmath"
@@ -57,6 +58,14 @@ func EquilateralTriangleFromTwoPoints(p0, p1 *Point, clockwise bool) *Triangle {
 // It returns the angle between a and b.
 func AngleFromTriangleSideLengths(a, b, c float64) float64 {
 	return math.Acos((a*a + b*b - c*c) / (2 * a * b))
+}
+
+func (t *Triangle) String() string {
+	return fmt.Sprintf("[triangle: \n {%0.3f, %0.3f},\n {%0.3f, %0.3f},\n {%0.3f, %0.3f}\n]",
+		t.PointA.X, t.PointA.Y,
+		t.PointB.X, t.PointB.Y,
+		t.PointC.X, t.PointC.Y,
+	)
 }
 
 // Centroid returns the centroid of a triangle.
@@ -151,6 +160,15 @@ func (t *Triangle) Points() []*Point {
 	return []*Point{t.PointA, t.PointB, t.PointC}
 }
 
+// Edges returns the three segments that make up the triangle.
+func (t *Triangle) Edges() []*Segment {
+	edges := []*Segment{}
+	edges = append(edges, NewSegmentFromPoints(t.PointA, t.PointB))
+	edges = append(edges, NewSegmentFromPoints(t.PointB, t.PointC))
+	edges = append(edges, NewSegmentFromPoints(t.PointC, t.PointA))
+	return edges
+}
+
 // Contains returns whether or not the given point is contained by the triangle.
 func (t *Triangle) Contains(p *Point) bool {
 	d1 := Clockwise(p, t.PointA, t.PointB)
@@ -163,10 +181,32 @@ func (t *Triangle) Contains(p *Point) bool {
 	return !(hasCCW && hasCW)
 }
 
+// Scaled returns another triangle that is scaled from this one.
 func (t *Triangle) Scaled(factor float64) *Triangle {
 	return NewTriangle(
 		t.PointA.X*factor, t.PointA.Y*factor,
 		t.PointB.X*factor, t.PointB.Y*factor,
 		t.PointC.X*factor, t.PointC.Y*factor,
 	)
+}
+
+// Equals returns whether or not this triangle is equal to another triangle
+func (t *Triangle) Equals(other *Triangle) bool {
+	if t == other {
+		return true
+	}
+	testTwo := func(pA, pB, pC, pD *Point) bool {
+		return (pA.Equals(pC) && pB.Equals(pD)) || (pA.Equals(pD) && pB.Equals(pC))
+	}
+
+	if t.PointA.Equals(other.PointA) {
+		return testTwo(t.PointB, t.PointC, other.PointB, other.PointC)
+	}
+	if t.PointA.Equals(other.PointB) {
+		return testTwo(t.PointB, t.PointC, other.PointA, other.PointC)
+	}
+	if t.PointA.Equals(other.PointC) {
+		return testTwo(t.PointB, t.PointC, other.PointA, other.PointB)
+	}
+	return false
 }

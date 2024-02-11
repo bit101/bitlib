@@ -119,12 +119,65 @@ func TestNewEqTriPoints(t *testing.T) {
 	}
 }
 
-func TestArea(t *testing.T) {
+func TestTriArea(t *testing.T) {
 	tri := NewTriangle(100, 100, 200, 100, 150, 0)
 	area := tri.Area()
 
 	if area != 5000 {
 		t.Errorf("Expected %f, got %f\n", 5000.0, area)
 	}
+}
 
+func TestTriEqual(t *testing.T) {
+	t0 := NewTriangle(100, 100, 200, 100, 200, 200)
+
+	// same object
+	t1 := t0
+	b := t0.Equals(t1)
+	if !b {
+		t.Errorf("Expected %t, got %t\n", true, b)
+	}
+
+	// same values
+	t1 = NewTriangle(100, 100, 200, 100, 200, 200)
+	b = t0.Equals(t1)
+	if !b {
+		t.Errorf("Expected %t, got %t\n", true, b)
+	}
+
+	// points in different order
+	t1 = NewTriangle(100, 100, 200, 200, 200, 100)
+	b = t0.Equals(t1)
+	if !b {
+		t.Errorf("Expected %t, got %t\n", true, b)
+	}
+
+	// unequal
+	t1 = NewTriangle(100, 100, 200, 200, 200, 100.001)
+	b = t0.Equals(t1)
+	if b {
+		t.Errorf("Expected %t, got %t\n", false, b)
+	}
+
+	// degenerate triangle
+	t0 = NewTriangle(100, 100, 100, 100, 200, 100)
+	t1 = NewTriangle(100, 100, 100, 100, 200, 100)
+	b = t0.Equals(t1)
+	if !b {
+		t.Errorf("Expected %t, got %t\n", true, b)
+	}
+
+	// degenerate but one obviously wrong
+	t1 = NewTriangle(100, 100, 100, 100, 200, 100.001)
+	b = t0.Equals(t1)
+	if b {
+		t.Errorf("Expected %t, got %t\n", false, b)
+	}
+
+	// degenerate, different order
+	t1 = NewTriangle(200, 100, 100, 100, 100, 100)
+	b = t0.Equals(t1)
+	if !b {
+		t.Errorf("Expected %t, got %t\n", true, b)
+	}
 }

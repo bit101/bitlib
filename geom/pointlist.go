@@ -2,6 +2,7 @@
 package geom
 
 import (
+	"errors"
 	"math"
 
 	"github.com/bit101/bitlib/blmath"
@@ -58,6 +59,27 @@ func (p *PointList) Add(point *Point) {
 // AddXY adds a point to the list
 func (p *PointList) AddXY(x, y float64) {
 	*p = append(*p, NewPoint(x, y))
+}
+
+// Insert inserts a point at the given index.
+func (p *PointList) Insert(index int, point *Point) error {
+	if index < 0 || index >= len(*p) {
+		return errors.New("index out of range")
+	}
+
+	(*p) = append((*p)[:index+1], (*p)[index:]...)
+	(*p)[index] = point
+	return nil
+}
+
+// First gets the first point in this list
+func (p PointList) First() *Point {
+	return p[0]
+}
+
+// Last gets the last point in this list
+func (p PointList) Last() *Point {
+	return p[len(p)-1]
 }
 
 // Rotate rotates all the points in a list.

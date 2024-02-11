@@ -50,7 +50,7 @@ func (c *Circle) Intersection(c1 *Circle) (*Point, *Point, bool) {
 
 // Contains reports whether a point is within this circle.
 func (c *Circle) Contains(p *Point) bool {
-	return PointInCircle(p.X, p.X, c.X, c.Y, c.Radius)
+	return PointInCircle(p.X, p.Y, c.X, c.Y, c.Radius)
 }
 
 // InvertPoint inverts a point into our out of a circle.

@@ -83,8 +83,8 @@ func TestEqual(t *testing.T) {
 
 	tests := []test{
 		{RGB(1, 1, 1), RGB(1, 1, 1), true},
-		{White(), RGB(1, 1, 1), true},
-		{Black(), RGB(0, 0, 0), true},
+		{White, RGB(1, 1, 1), true},
+		{Black, RGB(0, 0, 0), true},
 		{RGB(0.15, 0.43, 0.87).Quant(16), RGB(2.0/15.0, 6.0/15.0, 13.0/15.0), true},
 	}
 

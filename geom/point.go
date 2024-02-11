@@ -62,6 +62,21 @@ func RandomPointInTriangle(A, B, C *Point) *Point {
 	return NewPoint(a*A.X+b*B.X+c*C.X, a*A.Y+b*B.Y+c*C.Y)
 }
 
+// Equals returns whether this point is equal to another point.
+func (p *Point) Equals(other *Point) bool {
+	d := 0.000001
+	if p == other {
+		return true
+	}
+	if !blmath.Equalish(p.X, other.X, d) {
+		return false
+	}
+	if !blmath.Equalish(p.Y, other.Y, d) {
+		return false
+	}
+	return true
+}
+
 // Randomize randomizes all this point.
 func (p *Point) Randomize(rx, ry float64) {
 	p.Translate(random.FloatRange(-rx, rx), random.FloatRange(-ry, ry))
