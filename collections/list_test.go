@@ -103,8 +103,8 @@ func TestListInsert(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		list.Append(i)
 	}
-	list.Insert(5, 999)
-	val, err := list.Get(5)
+	list.Insert(6, 999)
+	val, err := list.Get(6)
 	exp := 999
 
 	if err != nil {

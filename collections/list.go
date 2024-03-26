@@ -71,7 +71,7 @@ func (l *List[T]) Remove(index int) (T, error) {
 		return value, fmt.Errorf("negative index not possible")
 	}
 	value := l.arr[index]
-	l.arr = append(l.arr[:index-1], l.arr[index:]...)
+	l.arr = slices.Delete(l.arr, index, index+1)
 	return value, nil
 }
 
@@ -98,8 +98,7 @@ func (l *List[T]) Insert(index int, value T) error {
 	if index < 0 {
 		return fmt.Errorf("negative index not possible")
 	}
-	l.arr = append(l.arr[:index+1], l.arr[index:]...)
-	l.arr[index] = value
+	l.arr = slices.Insert(l.arr, index, value)
 	return nil
 }
 
@@ -168,11 +167,7 @@ func (l *List[T]) String() string {
 
 // Slice returns a slice containing all the values in this list.
 func (l *List[T]) Slice() []T {
-	ret := make([]T, len(l.arr))
-	for i := 0; i < len(l.arr); i++ {
-		ret[i] = l.arr[i]
-	}
-	return ret
+	return slices.Clone(l.arr)
 }
 
 // Clear removes all elements from the list.
