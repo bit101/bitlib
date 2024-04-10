@@ -4,6 +4,7 @@ package geom
 import (
 	"errors"
 	"math"
+	"slices"
 
 	"github.com/bit101/bitlib/blmath"
 	"github.com/bit101/bitlib/noise"
@@ -49,6 +50,18 @@ func ConvexHull(points PointList) PointList {
 		}
 	}
 	return hull
+}
+
+// PointGrid creats a list of points arranged in a grid.
+func PointGrid(x, y, w, h, xres, yres float64) PointList {
+	list := NewPointList()
+
+	for i := x; i < x+w; i += xres {
+		for j := y; j < y+h; j += yres {
+			list.AddXY(i, j)
+		}
+	}
+	return list
 }
 
 // Add adds a point to the list
@@ -146,4 +159,60 @@ func (p PointList) Cull(test PointListCullTest) PointList {
 		}
 	}
 	return out
+}
+
+func (p PointList) SortYX() PointList {
+	temp := p.Clone()
+	slices.SortFunc(temp, func(a, b *Point) int {
+		if a.Y < b.Y {
+			return -1
+		}
+		if a.Y > b.Y {
+			return 1
+		}
+		if a.X < b.X {
+			return -1
+		}
+		if a.X > b.X {
+			return 1
+		}
+		return 0
+	})
+	return temp
+}
+
+// Unique returns a new PointList with any duplicate points removed.
+func (p PointList) Unique() PointList {
+	temp := NewPointList()
+	for i := 0; i < len(p); i++ {
+		found := false
+		for j := 0; j < len(temp); j++ {
+			if p[i].Equals(temp[j]) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			temp.Add(p[i])
+		}
+	}
+	return temp
+}
+
+// Clone returns a shallow copy of this PointList.
+func (p PointList) Clone() PointList {
+	temp := NewPointList()
+	for _, p := range p {
+		temp.Add(p)
+	}
+	return p
+}
+
+// DeepClone returns a shallow copy of this PointList.
+func (p PointList) DeepClone() PointList {
+	temp := NewPointList()
+	for _, p := range p {
+		temp.AddXY(p.X, p.Y)
+	}
+	return p
 }

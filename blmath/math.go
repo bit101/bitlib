@@ -195,6 +195,9 @@ func LCM(x, y int) int {
 
 // Simplify reduces an int/int fraction to its simplest form.
 func Simplify(x, y int) (int, int) {
+	if x == 0 {
+		return 0, 1
+	}
 	g := GCD(x, y)
 	return x / g, y / g
 }
