@@ -7,7 +7,7 @@ import (
 	"github.com/bit101/bitlib/geom"
 )
 
-// Triangulate does the Triangulation
+// Triangulate does the Triangulation and returns a list of triangles.
 func Triangulate(points geom.PointList) []*geom.Triangle {
 	superTri := getSuperTri(points)
 	triangulation := []*geom.Triangle{}
@@ -21,6 +21,12 @@ func Triangulate(points geom.PointList) []*geom.Triangle {
 	}
 	triangulation = removeOuter(superTri, triangulation)
 	return triangulation
+}
+
+// TriangulateEdges does the Triangulation and returns a list of segments.
+func TriangulateEdges(points geom.PointList) []*geom.Segment {
+	triangles := Triangulate(points)
+	return geom.GetEdges(triangles)
 }
 
 // getBadTriangles gets a list of trianges whose CircumCircle contains the given point

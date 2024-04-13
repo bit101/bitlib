@@ -210,3 +210,30 @@ func (t *Triangle) Equals(other *Triangle) bool {
 	}
 	return false
 }
+
+// Randomize randomizes the position of the three points of the triangle.
+func (t *Triangle) Randomize(amount float64) {
+	t.PointA.Randomize(amount, amount)
+	t.PointB.Randomize(amount, amount)
+	t.PointC.Randomize(amount, amount)
+}
+
+func GetEdges(triangles []*Triangle) []*Segment {
+	edges := []*Segment{}
+	for _, t := range triangles {
+		sides := t.Edges()
+		for _, side := range sides {
+			found := false
+			for _, e := range edges {
+				if side.Equals(e) {
+					found = true
+					break
+				}
+			}
+			if !found {
+				edges = append(edges, side)
+			}
+		}
+	}
+	return edges
+}

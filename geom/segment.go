@@ -5,6 +5,7 @@ import (
 	"math"
 
 	"github.com/bit101/bitlib/blmath"
+	"github.com/bit101/bitlib/random"
 )
 
 // Segment represents a line segment.
@@ -87,4 +88,12 @@ func (s *Segment) Equals(other *Segment) bool {
 		return true
 	}
 	return false
+}
+
+// Randomize randomizes the endpoints of the segment by the given amount.
+func (s *Segment) Randomize(amount float64) {
+	s.X0 += random.FloatRange(-amount, amount)
+	s.Y0 += random.FloatRange(-amount, amount)
+	s.X1 += random.FloatRange(-amount, amount)
+	s.Y1 += random.FloatRange(-amount, amount)
 }
