@@ -181,15 +181,6 @@ func (t *Triangle) Contains(p *Point) bool {
 	return !(hasCCW && hasCW)
 }
 
-// Scaled returns another triangle that is scaled from this one.
-func (t *Triangle) Scaled(factor float64) *Triangle {
-	return NewTriangle(
-		t.PointA.X*factor, t.PointA.Y*factor,
-		t.PointB.X*factor, t.PointB.Y*factor,
-		t.PointC.X*factor, t.PointC.Y*factor,
-	)
-}
-
 // Equals returns whether or not this triangle is equal to another triangle
 func (t *Triangle) Equals(other *Triangle) bool {
 	if t == other {
@@ -210,6 +201,10 @@ func (t *Triangle) Equals(other *Triangle) bool {
 	}
 	return false
 }
+
+//////////////////////////////
+// Transform in place
+//////////////////////////////
 
 // Randomize randomizes the position of the three points of the triangle.
 func (t *Triangle) Randomize(amount float64) {
@@ -263,4 +258,44 @@ func (t *Triangle) ScaleFrom(x, y, sx, sy float64) {
 	t.PointA.ScaleFrom(x, y, sx, sy)
 	t.PointB.ScaleFrom(x, y, sx, sy)
 	t.PointC.ScaleFrom(x, y, sx, sy)
+}
+
+// UniScale scales a triangle the given amount on each axis.
+func (t *Triangle) UniScale(scale float64) {
+	t.Scale(scale, scale)
+}
+
+// UniScaleFrom scales a triangle the given amount on each axis, from the given x, y location.
+func (t *Triangle) UniScaleFrom(x, y, scale float64) {
+	t.ScaleFrom(x, y, scale, scale)
+}
+
+//////////////////////////////
+// Return transformed copy
+//////////////////////////////
+
+// Scaled returns another triangle that is scaled from this one.
+func (t *Triangle) Scaled(sx, sy float64) *Triangle {
+	return NewTriangle(
+		t.PointA.X*sx, t.PointA.Y*sy,
+		t.PointB.X*sx, t.PointB.Y*sy,
+		t.PointC.X*sx, t.PointC.Y*sy,
+	)
+}
+
+// ScaledFrom returns a new triangle scaled by the given amount.
+func (t *Triangle) ScaledFrom(x, y, sx, sy float64) *Triangle {
+	t2 := NewTriangleFromPoints(t.PointA, t.PointB, t.PointC)
+	t2.ScaleFrom(x, y, sx, sy)
+	return t2
+}
+
+// UniScaled returns a new triangle scaled by the given amount - the same on both axes.
+func (t *Triangle) UniScaled(scale float64) *Triangle {
+	return t.Scaled(scale, scale)
+}
+
+// UniScaledFrom returns a new segment scaled from the given point.
+func (t *Triangle) UniScaledFrom(x, y, scale float64) *Triangle {
+	return t.ScaledFrom(x, y, scale, scale)
 }

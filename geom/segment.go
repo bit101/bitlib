@@ -90,6 +90,10 @@ func (s *Segment) Equals(other *Segment) bool {
 	return false
 }
 
+//////////////////////////////
+// Transform in place
+//////////////////////////////
+
 // Randomize randomizes the endpoints of the segment by the given amount.
 func (s *Segment) Randomize(amount float64) {
 	s.X0 += random.FloatRange(-amount, amount)
@@ -149,7 +153,7 @@ func (s *Segment) Scale(sx, sy float64) {
 	s.Y1 *= sy
 }
 
-// ScaleLocal scales a segment the given amount on each axis.
+// ScaleLocal scales a segment the given amount on each axis from its own center
 func (s *Segment) ScaleLocal(sx, sy float64) {
 	cx := (s.X0 + s.X1) / 2
 	cy := (s.Y0 + s.Y1) / 2
@@ -162,4 +166,46 @@ func (s *Segment) ScaleFrom(x, y, sx, sy float64) {
 	s.Y0 = (s.Y0-y)*sy + y
 	s.X1 = (s.X1-x)*sx + x
 	s.Y1 = (s.Y1-y)*sy + y
+}
+
+// UniScale scales a segment the given amount on both axes equally.
+func (s *Segment) UniScale(scale float64) {
+	s.Scale(scale, scale)
+}
+
+// UniScaleLocal scales a segment the given amount on each axis.
+func (s *Segment) UniScaleLocal(scale float64) {
+	s.ScaleLocal(scale, scale)
+}
+
+// UniScaleFrom scales a segment using the x, y location as a center
+func (s *Segment) UniScaleFrom(x, y, scale float64) {
+	s.ScaleFrom(x, y, scale, scale)
+}
+
+//////////////////////////////
+// Return new with transform
+//////////////////////////////
+
+// Scaled returns a new segment scaled by the given amount.
+func (s *Segment) Scaled(sx, sy float64) *Segment {
+	return NewSegment(s.X0*sx, s.Y0*sy, s.X1*sx, s.Y1*sy)
+}
+
+// ScaledFrom returns a new segment scaled by the given amount.
+func (s *Segment) ScaledFrom(x, y, sx, sy float64) *Segment {
+	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2.ScaleFrom(x, y, sx, sy)
+	return s2
+}
+
+// UniScaled returns a new segment scaled by the given amount - the same on both axes.
+func (s *Segment) UniScaled(scale float64) *Segment {
+	return s.Scaled(scale, scale)
+}
+
+// UniScaledFrom returns a new segment scaled from the given point.
+func (s *Segment) UniScaledFrom(x, y, scale float64) *Segment {
+	return s.ScaledFrom(x, y, scale, scale)
+
 }
