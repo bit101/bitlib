@@ -4,17 +4,17 @@ package geom
 // CircleList is a slice of circles
 type CircleList []*Circle
 
-// NewCircleList creates a new point list
+// NewCircleList creates a new circle list
 func NewCircleList() CircleList {
 	return CircleList{}
 }
 
-// Add adds a point to the list
+// Add adds a circle to the list
 func (c *CircleList) Add(circle *Circle) {
 	*c = append(*c, circle)
 }
 
-// AddXY adds a point to the list
+// AddXY adds a circle to the list
 func (c *CircleList) AddXY(x, y, r float64) {
 	*c = append(*c, NewCircle(x, y, r))
 }

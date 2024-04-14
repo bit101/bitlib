@@ -156,16 +156,16 @@ func (t *Triangle) Area() float64 {
 }
 
 // Points returns a list of points that make up this triangle
-func (t *Triangle) Points() []*Point {
-	return []*Point{t.PointA, t.PointB, t.PointC}
+func (t *Triangle) Points() PointList {
+	return PointList{t.PointA, t.PointB, t.PointC}
 }
 
 // Edges returns the three segments that make up the triangle.
-func (t *Triangle) Edges() []*Segment {
-	edges := []*Segment{}
-	edges = append(edges, NewSegmentFromPoints(t.PointA, t.PointB))
-	edges = append(edges, NewSegmentFromPoints(t.PointB, t.PointC))
-	edges = append(edges, NewSegmentFromPoints(t.PointC, t.PointA))
+func (t *Triangle) Edges() SegmentList {
+	edges := NewSegmentList()
+	edges.Add(NewSegmentFromPoints(t.PointA, t.PointB))
+	edges.Add(NewSegmentFromPoints(t.PointB, t.PointC))
+	edges.Add(NewSegmentFromPoints(t.PointC, t.PointA))
 	return edges
 }
 
@@ -218,22 +218,49 @@ func (t *Triangle) Randomize(amount float64) {
 	t.PointC.Randomize(amount, amount)
 }
 
-func GetEdges(triangles []*Triangle) []*Segment {
-	edges := []*Segment{}
-	for _, t := range triangles {
-		sides := t.Edges()
-		for _, side := range sides {
-			found := false
-			for _, e := range edges {
-				if side.Equals(e) {
-					found = true
-					break
-				}
-			}
-			if !found {
-				edges = append(edges, side)
-			}
-		}
-	}
-	return edges
+// Rotate rotates a triangle around the origin.
+func (t *Triangle) Rotate(angle float64) {
+	t.PointA.Rotate(angle)
+	t.PointB.Rotate(angle)
+	t.PointC.Rotate(angle)
+}
+
+// RotateLocal rotates a triangle around its own center (centroid)
+func (t *Triangle) RotateLocal(angle float64) {
+	center := t.Centroid()
+	t.RotateFrom(center.X, center.Y, angle)
+}
+
+// RotateFrom rotates a triangle around the given x, y location.
+func (t *Triangle) RotateFrom(x, y, angle float64) {
+	t.PointA.RotateFrom(x, y, angle)
+	t.PointB.RotateFrom(x, y, angle)
+	t.PointC.RotateFrom(x, y, angle)
+}
+
+// Translate translates a triangle the given amount on each axis.
+func (t *Triangle) Translate(x, y float64) {
+	t.PointA.Translate(x, y)
+	t.PointB.Translate(x, y)
+	t.PointC.Translate(x, y)
+}
+
+// Scale scales a triangle the given amount on each axis.
+func (t *Triangle) Scale(sx, sy float64) {
+	t.PointA.Scale(sx, sy)
+	t.PointB.Scale(sx, sy)
+	t.PointC.Scale(sx, sy)
+}
+
+// ScaleLocal scales a triangle the given amount on each axis.
+func (t *Triangle) ScaleLocal(sx, sy float64) {
+	center := t.Centroid()
+	t.ScaleFrom(center.X, center.Y, sx, sy)
+}
+
+// ScaleFrom scales a triangle the given amount on each axis, from the given x, y location.
+func (t *Triangle) ScaleFrom(x, y, sx, sy float64) {
+	t.PointA.ScaleFrom(x, y, sx, sy)
+	t.PointB.ScaleFrom(x, y, sx, sy)
+	t.PointC.ScaleFrom(x, y, sx, sy)
 }

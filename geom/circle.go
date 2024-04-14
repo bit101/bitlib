@@ -112,8 +112,8 @@ func (c *Circle) ScaleFrom(x, y, scale float64) {
 }
 
 // OuterCircles returns a slice of circles arrange around the outside of the given circle.
-func OuterCircles(c *Circle, count int, rotation float64) []*Circle {
-	circles := make([]*Circle, count)
+func (c *Circle) OuterCircles(count int, rotation float64) CircleList {
+	circles := NewCircleList()
 	countF := float64(count)
 
 	angle := blmath.Tau / countF
@@ -122,15 +122,15 @@ func OuterCircles(c *Circle, count int, rotation float64) []*Circle {
 	r := c.Radius + s
 	a := rotation
 	for i := 0; i < count; i++ {
-		circles[i] = NewCircle(c.X+math.Cos(a)*r, c.Y+math.Sin(a)*r, s)
+		circles.AddXY(c.X+math.Cos(a)*r, c.Y+math.Sin(a)*r, s)
 		a += angle
 	}
 	return circles
 }
 
 // InnerCircles returns a slice of circles arrange around the inside of the given circle.
-func InnerCircles(c *Circle, count int, rotation float64) []*Circle {
-	circles := make([]*Circle, count)
+func (c *Circle) InnerCircles(count int, rotation float64) CircleList {
+	circles := NewCircleList()
 	countF := float64(count)
 
 	angle := blmath.Tau / countF
@@ -139,7 +139,7 @@ func InnerCircles(c *Circle, count int, rotation float64) []*Circle {
 	r := c.Radius - s
 	a := rotation
 	for i := 0; i < count; i++ {
-		circles[i] = NewCircle(c.X+math.Cos(a)*r, c.Y+math.Sin(a)*r, s)
+		circles.AddXY(c.X+math.Cos(a)*r, c.Y+math.Sin(a)*r, s)
 		a += angle
 	}
 	return circles

@@ -8,10 +8,10 @@ import (
 )
 
 // Triangulate does the Triangulation and returns a list of triangles.
-func Triangulate(points geom.PointList) []*geom.Triangle {
+func Triangulate(points geom.PointList) geom.TriangleList {
 	superTri := getSuperTri(points)
-	triangulation := []*geom.Triangle{}
-	triangulation = append(triangulation, superTri)
+	triangulation := geom.NewTriangleList()
+	triangulation.Add(superTri)
 
 	for _, p := range points {
 		badTriangles := getBadTriangles(triangulation, p)
@@ -24,25 +24,25 @@ func Triangulate(points geom.PointList) []*geom.Triangle {
 }
 
 // TriangulateEdges does the Triangulation and returns a list of segments.
-func TriangulateEdges(points geom.PointList) []*geom.Segment {
+func TriangulateEdges(points geom.PointList) geom.SegmentList {
 	triangles := Triangulate(points)
-	return geom.GetEdges(triangles)
+	return triangles.Edges()
 }
 
 // getBadTriangles gets a list of trianges whose CircumCircle contains the given point
-func getBadTriangles(triangulation []*geom.Triangle, p *geom.Point) []*geom.Triangle {
-	badTriangles := []*geom.Triangle{}
+func getBadTriangles(triangulation geom.TriangleList, p *geom.Point) geom.TriangleList {
+	badTriangles := geom.NewTriangleList()
 	for _, t := range triangulation {
 		c := t.CircumCircle()
 		if c.Contains(p) {
-			badTriangles = append(badTriangles, t)
+			badTriangles.Add(t)
 		}
 	}
 	return badTriangles
 }
 
 // cullBadTriangles culls the bad triangles from the triangulation
-func cullBadTriangles(triangulation, badTriangles []*geom.Triangle) []*geom.Triangle {
+func cullBadTriangles(triangulation, badTriangles geom.TriangleList) geom.TriangleList {
 	for _, t := range badTriangles {
 		triangulation = removeTriangle(triangulation, t)
 	}
@@ -50,8 +50,8 @@ func cullBadTriangles(triangulation, badTriangles []*geom.Triangle) []*geom.Tria
 }
 
 // getPolygon gets a unique list of edges from the bad triangle list
-func getPolygon(badTriangles []*geom.Triangle) []*geom.Segment {
-	polygon := []*geom.Segment{}
+func getPolygon(badTriangles geom.TriangleList) geom.SegmentList {
+	polygon := geom.NewSegmentList()
 	for _, t := range badTriangles {
 		for _, e := range t.Edges() {
 			if !hasSharedEdge(badTriangles, t, e) {
@@ -63,7 +63,7 @@ func getPolygon(badTriangles []*geom.Triangle) []*geom.Segment {
 }
 
 // addEdgeToPolygon adds an edge to the polygon confirming it's unique
-func addEdgeToPolygon(list []*geom.Segment, edge *geom.Segment) []*geom.Segment {
+func addEdgeToPolygon(list geom.SegmentList, edge *geom.Segment) geom.SegmentList {
 	for _, p := range list {
 		if p.Equals(edge) {
 			return list
@@ -73,8 +73,8 @@ func addEdgeToPolygon(list []*geom.Segment, edge *geom.Segment) []*geom.Segment 
 }
 
 // removeOuter removes any triangles that contain points in the original super triangle
-func removeOuter(superTri *geom.Triangle, triangulation []*geom.Triangle) []*geom.Triangle {
-	removals := []*geom.Triangle{}
+func removeOuter(superTri *geom.Triangle, triangulation geom.TriangleList) geom.TriangleList {
+	removals := geom.NewTriangleList()
 	for _, t := range triangulation {
 		for _, p := range t.Points() {
 			if p.Equals(superTri.PointA) || p.Equals(superTri.PointB) || p.Equals(superTri.PointC) {
@@ -93,7 +93,7 @@ func removeOuter(superTri *geom.Triangle, triangulation []*geom.Triangle) []*geo
 }
 
 // removeTriangle removes a triangle from the triangulation
-func removeTriangle(triangulation []*geom.Triangle, triangle *geom.Triangle) []*geom.Triangle {
+func removeTriangle(triangulation geom.TriangleList, triangle *geom.Triangle) geom.TriangleList {
 	for i, t := range triangulation {
 		if t.Equals(triangle) {
 			triangulation = append(triangulation[:i], triangulation[i+1:]...)
@@ -104,7 +104,7 @@ func removeTriangle(triangulation []*geom.Triangle, triangle *geom.Triangle) []*
 }
 
 // addTriangles adds a new triangle to the triangulation based on an edge + a point
-func addTriangles(p *geom.Point, polygon []*geom.Segment, triangulation []*geom.Triangle) []*geom.Triangle {
+func addTriangles(p *geom.Point, polygon geom.SegmentList, triangulation geom.TriangleList) geom.TriangleList {
 	for _, e := range polygon {
 		tri := geom.NewTriangle(e.X0, e.Y0, e.X1, e.Y1, p.X, p.Y)
 		triangulation = append(triangulation, tri)
@@ -113,7 +113,7 @@ func addTriangles(p *geom.Point, polygon []*geom.Segment, triangulation []*geom.
 }
 
 // hasSharedEdge checks if a given edge of a triangle is shared with any other triangles in the list
-func hasSharedEdge(triangles []*geom.Triangle, triangle *geom.Triangle, edge *geom.Segment) bool {
+func hasSharedEdge(triangles geom.TriangleList, triangle *geom.Triangle, edge *geom.Segment) bool {
 	for _, t := range triangles {
 		if t != triangle {
 			for _, e := range t.Edges() {

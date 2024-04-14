@@ -114,23 +114,23 @@ func SegmentOnRect(x0, y0, x1, y1, rx, ry, rw, rh float64) bool {
 }
 
 // LineOnRect returns the points of intersection from a line to a rect (if any).
-func LineOnRect(lineX1, lineY1, lineX2, lineY2, rectX, rectY, rectW, rectH float64) []*Point {
-	points := []*Point{}
+func LineOnRect(lineX1, lineY1, lineX2, lineY2, rectX, rectY, rectW, rectH float64) PointList {
+	points := NewPointList()
 	x, y, hit := SegmentOnLine(rectX, rectY, rectX+rectW, rectY, lineX1, lineY1, lineX2, lineY2)
 	if hit {
-		points = append(points, NewPoint(x, y))
+		points.AddXY(x, y)
 	}
 	x, y, hit = SegmentOnLine(rectX+rectW, rectY, rectX+rectW, rectY+rectH, lineX1, lineY1, lineX2, lineY2)
 	if hit {
-		points = append(points, NewPoint(x, y))
+		points.AddXY(x, y)
 	}
 	x, y, hit = SegmentOnLine(rectX+rectW, rectY+rectH, rectX, rectY+rectH, lineX1, lineY1, lineX2, lineY2)
 	if hit {
-		points = append(points, NewPoint(x, y))
+		points.AddXY(x, y)
 	}
 	x, y, hit = SegmentOnLine(rectX, rectY+rectH, rectX, rectY, lineX1, lineY1, lineX2, lineY2)
 	if hit {
-		points = append(points, NewPoint(x, y))
+		points.AddXY(x, y)
 	}
 	return points
 }

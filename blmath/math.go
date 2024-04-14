@@ -143,8 +143,16 @@ func Fract(n float64) float64 {
 }
 
 // LoopSin maps a normal value to min and max values with a sine wave.
+// In this version the values will go from min, to max and back as t goes from 0 to 1.
 func LoopSin(t, min, max float64) float64 {
 	return Map(math.Cos(t*Tau), 1, -1, min, max)
+}
+
+// LoopSinMid maps a normal value to min and max values with a sine wave.
+// In this version the values will start from the midpoint of min and max,
+// go up to max, back to min and back to the midpoint.
+func LoopSinMid(t, min, max float64) float64 {
+	return Map(math.Cos((t+0.25)*Tau), 1, -1, min, max)
 }
 
 // Equalish returns whether the two values are approximately equal.
