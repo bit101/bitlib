@@ -161,6 +161,28 @@ func (p PointList) Cull(test PointListCullTest) PointList {
 	return out
 }
 
+// SortXY sorts the list by x position, deciding matches with y
+func (p PointList) SortXY() PointList {
+	temp := p.Clone()
+	slices.SortFunc(temp, func(a, b *Point) int {
+		if a.X < b.X {
+			return -1
+		}
+		if a.X > b.X {
+			return 1
+		}
+		if a.Y < b.Y {
+			return -1
+		}
+		if a.Y > b.Y {
+			return 1
+		}
+		return 0
+	})
+	return temp
+}
+
+// SortYX sorts the list by y position, deciding matches with x
 func (p PointList) SortYX() PointList {
 	temp := p.Clone()
 	slices.SortFunc(temp, func(a, b *Point) int {
@@ -174,6 +196,24 @@ func (p PointList) SortYX() PointList {
 			return -1
 		}
 		if a.X > b.X {
+			return 1
+		}
+		return 0
+	})
+	return temp
+}
+
+// SortDistFrom sorts the list by the distance to a given x, y location
+func (p PointList) SortDistFrom(x, y float64) PointList {
+	temp := p.Clone()
+	point := NewPoint(x, y)
+	slices.SortFunc(temp, func(a, b *Point) int {
+		da := a.Distance(point)
+		db := b.Distance(point)
+		if da < db {
+			return -1
+		}
+		if db < da {
 			return 1
 		}
 		return 0
