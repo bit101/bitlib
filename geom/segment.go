@@ -102,6 +102,52 @@ func (s *Segment) Randomize(amount float64) {
 	s.Y1 += random.FloatRange(-amount, amount)
 }
 
+// Scale scales a segment the given amount on each axis.
+func (s *Segment) Scale(sx, sy float64) {
+	s.X0 *= sx
+	s.Y0 *= sy
+	s.X1 *= sx
+	s.Y1 *= sy
+}
+
+// ScaleFrom scales a segment the given amount on each axis, from the given x, y location.
+func (s *Segment) ScaleFrom(x, y, sx, sy float64) {
+	s.X0 = (s.X0-x)*sx + x
+	s.Y0 = (s.Y0-y)*sy + y
+	s.X1 = (s.X1-x)*sx + x
+	s.Y1 = (s.Y1-y)*sy + y
+}
+
+// ScaleLocal scales a segment the given amount on each axis from its own center
+func (s *Segment) ScaleLocal(sx, sy float64) {
+	cx := (s.X0 + s.X1) / 2
+	cy := (s.Y0 + s.Y1) / 2
+	s.ScaleFrom(cx, cy, sx, sy)
+}
+
+// UniScale scales a segment the given amount on both axes equally.
+func (s *Segment) UniScale(scale float64) {
+	s.Scale(scale, scale)
+}
+
+// UniScaleFrom scales a segment using the x, y location as a center
+func (s *Segment) UniScaleFrom(x, y, scale float64) {
+	s.ScaleFrom(x, y, scale, scale)
+}
+
+// UniScaleLocal scales a segment the given amount on each axis.
+func (s *Segment) UniScaleLocal(scale float64) {
+	s.ScaleLocal(scale, scale)
+}
+
+// Translate translates a segment the given amount on each axis.
+func (s *Segment) Translate(x, y float64) {
+	s.X0 += x
+	s.Y0 += y
+	s.X1 += x
+	s.Y1 += y
+}
+
 // Rotate rotates a segment around the origin.
 func (s *Segment) Rotate(angle float64) {
 	cos := math.Cos(angle)
@@ -114,13 +160,6 @@ func (s *Segment) Rotate(angle float64) {
 	s.Y0 = y0
 	s.X1 = x1
 	s.Y1 = y1
-}
-
-// RotateLocal rotates a segment around its own center.
-func (s *Segment) RotateLocal(angle float64) {
-	cx := (s.X0 + s.X1) / 2
-	cy := (s.Y0 + s.Y1) / 2
-	s.RotateFrom(cx, cy, angle)
 }
 
 // RotateFrom rotates a segment around the given x, y location.
@@ -137,55 +176,23 @@ func (s *Segment) RotateFrom(x, y, angle float64) {
 	s.Y1 = y1 + y
 }
 
-// Translate translates a segment the given amount on each axis.
-func (s *Segment) Translate(x, y float64) {
-	s.X0 += x
-	s.Y0 += y
-	s.X1 += x
-	s.Y1 += y
-}
-
-// Scale scales a segment the given amount on each axis.
-func (s *Segment) Scale(sx, sy float64) {
-	s.X0 *= sx
-	s.Y0 *= sy
-	s.X1 *= sx
-	s.Y1 *= sy
-}
-
-// ScaleLocal scales a segment the given amount on each axis from its own center
-func (s *Segment) ScaleLocal(sx, sy float64) {
+// RotateLocal rotates a segment around its own center.
+func (s *Segment) RotateLocal(angle float64) {
 	cx := (s.X0 + s.X1) / 2
 	cy := (s.Y0 + s.Y1) / 2
-	s.ScaleFrom(cx, cy, sx, sy)
-}
-
-// ScaleFrom scales a segment the given amount on each axis, from the given x, y location.
-func (s *Segment) ScaleFrom(x, y, sx, sy float64) {
-	s.X0 = (s.X0-x)*sx + x
-	s.Y0 = (s.Y0-y)*sy + y
-	s.X1 = (s.X1-x)*sx + x
-	s.Y1 = (s.Y1-y)*sy + y
-}
-
-// UniScale scales a segment the given amount on both axes equally.
-func (s *Segment) UniScale(scale float64) {
-	s.Scale(scale, scale)
-}
-
-// UniScaleLocal scales a segment the given amount on each axis.
-func (s *Segment) UniScaleLocal(scale float64) {
-	s.ScaleLocal(scale, scale)
-}
-
-// UniScaleFrom scales a segment using the x, y location as a center
-func (s *Segment) UniScaleFrom(x, y, scale float64) {
-	s.ScaleFrom(x, y, scale, scale)
+	s.RotateFrom(cx, cy, angle)
 }
 
 //////////////////////////////
 // Return new with transform
 //////////////////////////////
+
+// Randomized returns a randomized segment from this segment.
+func (s *Segment) Randomized(amount float64) *Segment {
+	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2.Randomize(amount)
+	return s2
+}
 
 // Scaled returns a new segment scaled by the given amount.
 func (s *Segment) Scaled(sx, sy float64) *Segment {
@@ -199,13 +206,58 @@ func (s *Segment) ScaledFrom(x, y, sx, sy float64) *Segment {
 	return s2
 }
 
+// ScaledLocal returns a new segment scaled by the given amount.
+func (s *Segment) ScaledLocal(sx, sy float64) *Segment {
+	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2.ScaleLocal(sx, sy)
+	return s2
+}
+
 // UniScaled returns a new segment scaled by the given amount - the same on both axes.
 func (s *Segment) UniScaled(scale float64) *Segment {
-	return s.Scaled(scale, scale)
+	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2.UniScale(scale)
+	return s2
 }
 
 // UniScaledFrom returns a new segment scaled from the given point.
 func (s *Segment) UniScaledFrom(x, y, scale float64) *Segment {
-	return s.ScaledFrom(x, y, scale, scale)
+	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2.ScaledFrom(x, y, scale, scale)
+	return s2
+}
 
+// UniScaledLocal returns a new segment scaled by the given amount - the same on both axes.
+func (s *Segment) UniScaledLocal(scale float64) *Segment {
+	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2.UniScaleLocal(scale)
+	return s2
+}
+
+// Translated returns a new segment translated from this.
+func (s *Segment) Translated(x, y float64) *Segment {
+	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2.Translate(x, y)
+	return s2
+}
+
+// Rotated returns a new segment rotated from this.
+func (s *Segment) Rotated(angle float64) *Segment {
+	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2.Rotate(angle)
+	return s2
+}
+
+// RotatedFrom returns a new segment rotated from this.
+func (s *Segment) RotatedFrom(x, y, angle float64) *Segment {
+	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2.RotateFrom(x, y, angle)
+	return s2
+}
+
+// RotatedLocal returns a new segment rotated from this.
+func (s *Segment) RotatedLocal(angle float64) *Segment {
+	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2.RotateLocal(angle)
+	return s2
 }

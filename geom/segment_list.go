@@ -19,31 +19,10 @@ func (s *SegmentList) AddXY(x0, y0, x1, y1 float64) {
 	*s = append(*s, NewSegment(x0, y0, x1, y1))
 }
 
-// Rotate rotates all the segments in a list.
-func (s *SegmentList) Rotate(angle float64) {
-	for _, segment := range *s {
-		segment.Rotate(angle)
-	}
-}
-
-// RotateLocal rotates each segment from its own center.
-func (s *SegmentList) RotateLocal(angle float64) {
-	for _, segment := range *s {
-		segment.RotateLocal(angle)
-	}
-}
-
-// RotateFrom rotates all the segments in a list using the x, y location as a center.
-func (s *SegmentList) RotateFrom(x, y float64, angle float64) {
-	for _, segment := range *s {
-		segment.RotateFrom(x, y, angle)
-	}
-}
-
-// Translate translates all the segments in a list.
-func (s *SegmentList) Translate(x, y float64) {
-	for _, segment := range *s {
-		segment.Translate(x, y)
+// Randomize randomizes the position of both ends of the segment by up to a given amount on each axis.
+func (s *SegmentList) Randomize(amount float64) {
+	for _, seg := range *s {
+		seg.Randomize(amount)
 	}
 }
 
@@ -54,13 +33,6 @@ func (s *SegmentList) Scale(sx, sy float64) {
 	}
 }
 
-// ScaleLocal scales each segment from its own center.
-func (s *SegmentList) ScaleLocal(sx, sy float64) {
-	for _, segment := range *s {
-		segment.ScaleLocal(sx, sy)
-	}
-}
-
 // ScaleFrom scales all the segments in a list using the x, y location as a center.
 func (s *SegmentList) ScaleFrom(x, y, sx, sy float64) {
 	for _, segment := range *s {
@@ -68,9 +40,58 @@ func (s *SegmentList) ScaleFrom(x, y, sx, sy float64) {
 	}
 }
 
-// Randomize randomizes the position of both ends of the segment by up to a given amount on each axis.
-func (s *SegmentList) Randomize(amount float64) {
-	for _, seg := range *s {
-		seg.Randomize(amount)
+// ScaleLocal scales each segment from its own center.
+func (s *SegmentList) ScaleLocal(sx, sy float64) {
+	for _, segment := range *s {
+		segment.ScaleLocal(sx, sy)
+	}
+}
+
+// UniScale scales each segment
+func (s *SegmentList) UniScale(scale float64) {
+	for _, segment := range *s {
+		segment.UniScale(scale)
+	}
+}
+
+// UniScaleFrom scales each segment
+func (s *SegmentList) UniScaleFrom(x, y, scale float64) {
+	for _, segment := range *s {
+		segment.UniScaleFrom(x, y, scale)
+	}
+}
+
+// UniScaleLocal scales each segment
+func (s *SegmentList) UniScaleLocal(scale float64) {
+	for _, segment := range *s {
+		segment.UniScaleLocal(scale)
+	}
+}
+
+// Translate translates all the segments in a list.
+func (s *SegmentList) Translate(x, y float64) {
+	for _, segment := range *s {
+		segment.Translate(x, y)
+	}
+}
+
+// Rotate rotates all the segments in a list.
+func (s *SegmentList) Rotate(angle float64) {
+	for _, segment := range *s {
+		segment.Rotate(angle)
+	}
+}
+
+// RotateFrom rotates all the segments in a list using the x, y location as a center.
+func (s *SegmentList) RotateFrom(x, y float64, angle float64) {
+	for _, segment := range *s {
+		segment.RotateFrom(x, y, angle)
+	}
+}
+
+// RotateLocal rotates each segment from its own center.
+func (s *SegmentList) RotateLocal(angle float64) {
+	for _, segment := range *s {
+		segment.RotateLocal(angle)
 	}
 }

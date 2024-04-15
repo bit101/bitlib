@@ -213,33 +213,6 @@ func (t *Triangle) Randomize(amount float64) {
 	t.PointC.Randomize(amount, amount)
 }
 
-// Rotate rotates a triangle around the origin.
-func (t *Triangle) Rotate(angle float64) {
-	t.PointA.Rotate(angle)
-	t.PointB.Rotate(angle)
-	t.PointC.Rotate(angle)
-}
-
-// RotateLocal rotates a triangle around its own center (centroid)
-func (t *Triangle) RotateLocal(angle float64) {
-	center := t.Centroid()
-	t.RotateFrom(center.X, center.Y, angle)
-}
-
-// RotateFrom rotates a triangle around the given x, y location.
-func (t *Triangle) RotateFrom(x, y, angle float64) {
-	t.PointA.RotateFrom(x, y, angle)
-	t.PointB.RotateFrom(x, y, angle)
-	t.PointC.RotateFrom(x, y, angle)
-}
-
-// Translate translates a triangle the given amount on each axis.
-func (t *Triangle) Translate(x, y float64) {
-	t.PointA.Translate(x, y)
-	t.PointB.Translate(x, y)
-	t.PointC.Translate(x, y)
-}
-
 // Scale scales a triangle the given amount on each axis.
 func (t *Triangle) Scale(sx, sy float64) {
 	t.PointA.Scale(sx, sy)
@@ -247,17 +220,17 @@ func (t *Triangle) Scale(sx, sy float64) {
 	t.PointC.Scale(sx, sy)
 }
 
-// ScaleLocal scales a triangle the given amount on each axis.
-func (t *Triangle) ScaleLocal(sx, sy float64) {
-	center := t.Centroid()
-	t.ScaleFrom(center.X, center.Y, sx, sy)
-}
-
 // ScaleFrom scales a triangle the given amount on each axis, from the given x, y location.
 func (t *Triangle) ScaleFrom(x, y, sx, sy float64) {
 	t.PointA.ScaleFrom(x, y, sx, sy)
 	t.PointB.ScaleFrom(x, y, sx, sy)
 	t.PointC.ScaleFrom(x, y, sx, sy)
+}
+
+// ScaleLocal scales a triangle the given amount on each axis.
+func (t *Triangle) ScaleLocal(sx, sy float64) {
+	center := t.Centroid()
+	t.ScaleFrom(center.X, center.Y, sx, sy)
 }
 
 // UniScale scales a triangle the given amount on each axis.
@@ -270,23 +243,67 @@ func (t *Triangle) UniScaleFrom(x, y, scale float64) {
 	t.ScaleFrom(x, y, scale, scale)
 }
 
+// UniScaleLocal scales a triangle the given amount on each axis
+func (t *Triangle) UniScaleLocal(scale float64) {
+	t.ScaleLocal(scale, scale)
+}
+
+// Translate translates a triangle the given amount on each axis.
+func (t *Triangle) Translate(x, y float64) {
+	t.PointA.Translate(x, y)
+	t.PointB.Translate(x, y)
+	t.PointC.Translate(x, y)
+}
+
+// Rotate rotates a triangle around the origin.
+func (t *Triangle) Rotate(angle float64) {
+	t.PointA.Rotate(angle)
+	t.PointB.Rotate(angle)
+	t.PointC.Rotate(angle)
+}
+
+// RotateFrom rotates a triangle around the given x, y location.
+func (t *Triangle) RotateFrom(x, y, angle float64) {
+	t.PointA.RotateFrom(x, y, angle)
+	t.PointB.RotateFrom(x, y, angle)
+	t.PointC.RotateFrom(x, y, angle)
+}
+
+// RotateLocal rotates a triangle around its own center (centroid)
+func (t *Triangle) RotateLocal(angle float64) {
+	center := t.Centroid()
+	t.RotateFrom(center.X, center.Y, angle)
+}
+
 //////////////////////////////
 // Return transformed copy
 //////////////////////////////
 
+// Randomized returns another triangle that is randomized from this one.
+func (t *Triangle) Randomized(amount float64) *Triangle {
+	t2 := NewTriangleFromPoints(t.PointA, t.PointB, t.PointC)
+	t2.Randomize(amount)
+	return t2
+}
+
 // Scaled returns another triangle that is scaled from this one.
 func (t *Triangle) Scaled(sx, sy float64) *Triangle {
-	return NewTriangle(
-		t.PointA.X*sx, t.PointA.Y*sy,
-		t.PointB.X*sx, t.PointB.Y*sy,
-		t.PointC.X*sx, t.PointC.Y*sy,
-	)
+	t2 := NewTriangleFromPoints(t.PointA, t.PointB, t.PointC)
+	t2.Scale(sx, sy)
+	return t2
 }
 
 // ScaledFrom returns a new triangle scaled by the given amount.
 func (t *Triangle) ScaledFrom(x, y, sx, sy float64) *Triangle {
 	t2 := NewTriangleFromPoints(t.PointA, t.PointB, t.PointC)
 	t2.ScaleFrom(x, y, sx, sy)
+	return t2
+}
+
+// ScaledLocal returns a new triangle scaled by the given amount.
+func (t *Triangle) ScaledLocal(sx, sy float64) *Triangle {
+	t2 := NewTriangleFromPoints(t.PointA, t.PointB, t.PointC)
+	t2.ScaleLocal(sx, sy)
 	return t2
 }
 
@@ -298,4 +315,37 @@ func (t *Triangle) UniScaled(scale float64) *Triangle {
 // UniScaledFrom returns a new segment scaled from the given point.
 func (t *Triangle) UniScaledFrom(x, y, scale float64) *Triangle {
 	return t.ScaledFrom(x, y, scale, scale)
+}
+
+// UniScaledLocal returns a new segment scaled locally
+func (t *Triangle) UniScaledLocal(scale float64) *Triangle {
+	return t.ScaledLocal(scale, scale)
+}
+
+// Translated returns a new triangle translated by the given amount.
+func (t *Triangle) Translated(tx, ty float64) *Triangle {
+	t2 := NewTriangleFromPoints(t.PointA, t.PointB, t.PointC)
+	t2.Translate(tx, ty)
+	return t2
+}
+
+// Rotated returns a new triangle rotated by the given amount.
+func (t *Triangle) Rotated(angle float64) *Triangle {
+	t2 := NewTriangleFromPoints(t.PointA, t.PointB, t.PointC)
+	t2.Rotate(angle)
+	return t2
+}
+
+// RotatedFrom returns a new triangle rotated by the given amount.
+func (t *Triangle) RotatedFrom(x, y, angle float64) *Triangle {
+	t2 := NewTriangleFromPoints(t.PointA, t.PointB, t.PointC)
+	t2.RotateFrom(x, y, angle)
+	return t2
+}
+
+// RotatedLocal returns a new triangle rotated by the given amount.
+func (t *Triangle) RotatedLocal(angle float64) *Triangle {
+	t2 := NewTriangleFromPoints(t.PointA, t.PointB, t.PointC)
+	t2.RotateLocal(angle)
+	return t2
 }

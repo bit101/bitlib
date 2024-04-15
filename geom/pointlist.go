@@ -95,24 +95,10 @@ func (p PointList) Last() *Point {
 	return p[len(p)-1]
 }
 
-// Rotate rotates all the points in a list.
-func (p *PointList) Rotate(angle float64) {
+// Randomize randomizes all the points in a list.
+func (p *PointList) Randomize(rx, ry float64) {
 	for _, point := range *p {
-		point.Rotate(angle)
-	}
-}
-
-// RotateFrom rotates all the points in a list using the x, y location as a center.
-func (p *PointList) RotateFrom(x, y float64, angle float64) {
-	for _, point := range *p {
-		point.RotateFrom(x, y, angle)
-	}
-}
-
-// Translate translates all the points in a list.
-func (p *PointList) Translate(x, y float64) {
-	for _, point := range *p {
-		point.Translate(x, y)
+		point.Randomize(rx, ry)
 	}
 }
 
@@ -130,10 +116,38 @@ func (p *PointList) ScaleFrom(x, y, sx, sy float64) {
 	}
 }
 
-// Randomize randomizes all the points in a list.
-func (p *PointList) Randomize(rx, ry float64) {
+// UniScale scales all the points in a list.
+func (p *PointList) UniScale(scale float64) {
 	for _, point := range *p {
-		point.Randomize(rx, ry)
+		point.UniScale(scale)
+	}
+}
+
+// UniScaleFrom scales all the points in a list using the x, y location as a center.
+func (p *PointList) UniScaleFrom(x, y, scale float64) {
+	for _, point := range *p {
+		point.UniScaleFrom(x, y, scale)
+	}
+}
+
+// Translate translates all the points in a list.
+func (p *PointList) Translate(x, y float64) {
+	for _, point := range *p {
+		point.Translate(x, y)
+	}
+}
+
+// Rotate rotates all the points in a list.
+func (p *PointList) Rotate(angle float64) {
+	for _, point := range *p {
+		point.Rotate(angle)
+	}
+}
+
+// RotateFrom rotates all the points in a list using the x, y location as a center.
+func (p *PointList) RotateFrom(x, y float64, angle float64) {
+	for _, point := range *p {
+		point.RotateFrom(x, y, angle)
 	}
 }
 

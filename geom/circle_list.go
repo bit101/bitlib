@@ -19,24 +19,17 @@ func (c *CircleList) AddXY(x, y, r float64) {
 	*c = append(*c, NewCircle(x, y, r))
 }
 
-// Rotate rotates all the circles in a list.
-func (c *CircleList) Rotate(angle float64) {
+// RandomizePosition randomizes the position of all the circles in a list.
+func (c *CircleList) RandomizePosition(amount float64) {
 	for _, circle := range *c {
-		circle.Rotate(angle)
+		circle.RandomizePosition(amount)
 	}
 }
 
-// RotateFrom rotates all the circles in a list using the x, y location as a center.
-func (c *CircleList) RotateFrom(x, y float64, angle float64) {
+// RandomizeRadius randomizes the position of all the circles in a list.
+func (c *CircleList) RandomizeRadius(amount float64) {
 	for _, circle := range *c {
-		circle.RotateFrom(x, y, angle)
-	}
-}
-
-// Translate translates all the circles in a list.
-func (c *CircleList) Translate(x, y float64) {
-	for _, circle := range *c {
-		circle.Translate(x, y)
+		circle.RandomizeRadius(amount)
 	}
 }
 
@@ -51,5 +44,33 @@ func (c *CircleList) Scale(scale float64) {
 func (c *CircleList) ScaleFrom(x, y, scale float64) {
 	for _, circle := range *c {
 		circle.ScaleFrom(x, y, scale)
+	}
+}
+
+// ScaleLocal scales all the circles in a list.
+func (c *CircleList) ScaleLocal(scale float64) {
+	for _, circle := range *c {
+		circle.ScaleLocal(scale)
+	}
+}
+
+// Translate translates all the circles in a list.
+func (c *CircleList) Translate(x, y float64) {
+	for _, circle := range *c {
+		circle.Translate(x, y)
+	}
+}
+
+// Rotate rotates all the circles in a list.
+func (c *CircleList) Rotate(angle float64) {
+	for _, circle := range *c {
+		circle.Rotate(angle)
+	}
+}
+
+// RotateFrom rotates all the circles in a list using the x, y location as a center.
+func (c *CircleList) RotateFrom(x, y float64, angle float64) {
+	for _, circle := range *c {
+		circle.RotateFrom(x, y, angle)
 	}
 }

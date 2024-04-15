@@ -77,11 +77,6 @@ func (p *Point) Equals(other *Point) bool {
 	return true
 }
 
-// Randomize randomizes all this point.
-func (p *Point) Randomize(rx, ry float64) {
-	p.Translate(random.FloatRange(-rx, rx), random.FloatRange(-ry, ry))
-}
-
 // Coords returns the x, y coords of this point.
 func (p *Point) Coords() (float64, float64) {
 	return p.X, p.Y
@@ -132,10 +127,18 @@ func QuadraticPoint(t float64, p0 *Point, p1 *Point, p2 *Point) *Point {
 	}
 }
 
-// Translate moves this point on the x and y axes.
-func (p *Point) Translate(x float64, y float64) {
-	p.X += x
-	p.Y += y
+// Clockwise returns whether or not the three points listed are in clockwise order
+func Clockwise(p1, p2, p3 *Point) bool {
+	return (p1.X-p3.X)*(p2.Y-p3.Y)-(p2.X-p3.X)*(p1.Y-p3.Y) > 0
+}
+
+//////////////////////////////
+// Transform in place
+//////////////////////////////
+
+// Randomize randomizes this point.
+func (p *Point) Randomize(rx, ry float64) {
+	p.Translate(random.FloatRange(-rx, rx), random.FloatRange(-ry, ry))
 }
 
 // Scale scales this point on the x and y axes.
@@ -164,14 +167,10 @@ func (p *Point) UniScaleFrom(x, y, scale float64) {
 	p.ScaleFrom(x, y, scale, scale)
 }
 
-// Scaled creates a new point, a scaled version of this point.
-func (p *Point) Scaled(scaleX float64, scaleY float64) *Point {
-	return NewPoint(p.X*scaleX, p.Y*scaleY)
-}
-
-// UniScaled creates a new point, a scaled version of this point.
-func (p *Point) UniScaled(scale float64) *Point {
-	return NewPoint(p.X*scale, p.Y*scale)
+// Translate moves this point on the x and y axes.
+func (p *Point) Translate(x float64, y float64) {
+	p.X += x
+	p.Y += y
 }
 
 // Rotate rotates this point around the origin.
@@ -193,7 +192,56 @@ func (p *Point) RotateFrom(x, y float64, angle float64) {
 	p.Translate(x, y)
 }
 
-// Clockwise returns whether or not the three points listed are in clockwise order
-func Clockwise(p1, p2, p3 *Point) bool {
-	return (p1.X-p3.X)*(p2.Y-p3.Y)-(p2.X-p3.X)*(p1.Y-p3.Y) > 0
+//////////////////////////////
+// Return transformed copy
+//////////////////////////////
+
+// Randomized returns a new point, randomized from this.
+func (p *Point) Randomized(rx, ry float64) *Point {
+	p2 := NewPoint(p.X, p.Y)
+	p2.Randomize(rx, ry)
+	return p2
+}
+
+// Scaled creates a new point, a scaled version of this point.
+func (p *Point) Scaled(scaleX float64, scaleY float64) *Point {
+	return NewPoint(p.X*scaleX, p.Y*scaleY)
+}
+
+// ScaledFrom creates a new point, scaled from a given x, y location.
+func (p *Point) ScaledFrom(x, y, scaleX, scaleY float64) *Point {
+	p2 := NewPoint(p.X, p.Y)
+	p2.ScaleFrom(x, y, scaleX, scaleY)
+	return p2
+}
+
+// UniScaled creates a new point, a scaled version of this point.
+func (p *Point) UniScaled(scale float64) *Point {
+	return NewPoint(p.X*scale, p.Y*scale)
+}
+
+// UniScaledFrom creates a new point, scaled from a given x, y location.
+func (p *Point) UniScaledFrom(x, y, scale float64) *Point {
+	p2 := NewPoint(p.X, p.Y)
+	p2.UniScaleFrom(x, y, scale)
+	return p2
+}
+
+// Translated creates a new point, a translated version of this point.
+func (p *Point) Translated(tx, ty float64) *Point {
+	return NewPoint(p.X+tx, p.Y+ty)
+}
+
+// Rotated creates a new point, a rotated version of this point.
+func (p *Point) Rotated(angle float64) *Point {
+	p2 := NewPoint(p.X, p.Y)
+	p2.Rotate(angle)
+	return p2
+}
+
+// RotatedFrom creates a new point, rotated from the given x, y location.
+func (p *Point) RotatedFrom(x, y, angle float64) *Point {
+	p2 := NewPoint(p.X, p.Y)
+	p2.RotateFrom(x, y, angle)
+	return p2
 }

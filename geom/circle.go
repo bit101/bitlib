@@ -6,6 +6,7 @@ import (
 	"math"
 
 	"github.com/bit101/bitlib/blmath"
+	"github.com/bit101/bitlib/random"
 )
 
 // Circle is the struct representing a circle.
@@ -68,47 +69,6 @@ func (c *Circle) InvertXY(x, y float64) (float64, float64) {
 	ratio := dist1 / dist0
 
 	return c.X + dx*ratio, c.Y + dy*ratio
-}
-
-// Rotate rotates a circle around the origin.
-func (c *Circle) Rotate(angle float64) {
-	x := c.X*math.Cos(angle) + c.Y*math.Sin(angle)
-	y := c.Y*math.Cos(angle) - c.X*math.Sin(angle)
-	c.X = x
-	c.Y = y
-}
-
-// RotateFrom rotates a circle around the given x, y location.
-func (c *Circle) RotateFrom(x, y float64, angle float64) {
-	c.Translate(-x, -y)
-
-	x1 := c.X*math.Cos(angle) + c.Y*math.Sin(angle)
-	y1 := c.Y*math.Cos(angle) - c.X*math.Sin(angle)
-	c.X = x1
-	c.Y = y1
-	c.Translate(x, y)
-}
-
-// Translate moves this circle on the x and y axes.
-func (c *Circle) Translate(x float64, y float64) {
-	c.X += x
-	c.Y += y
-}
-
-// Scale scales this circle on the x and y axes, as well as its size.
-func (c *Circle) Scale(scale float64) {
-	c.X *= scale
-	c.Y *= scale
-	c.Radius *= scale
-}
-
-// ScaleFrom scales this circle on the x and y axes, with the given x, y location as a center.
-func (c *Circle) ScaleFrom(x, y, scale float64) {
-	c.Translate(-x, -y)
-	c.X *= scale
-	c.Y *= scale
-	c.Radius *= scale
-	c.Translate(x, y)
 }
 
 // OuterCircles returns a slice of circles arrange around the outside of the given circle.
@@ -200,4 +160,126 @@ func TangentSegmentToCircles(c0, c1 *Circle, sign float64) *Segment {
 	x1 := c1.X + math.Cos(angle3)*c1.Radius
 	y1 := c1.Y + math.Sin(angle3)*c1.Radius
 	return NewSegment(x0, y0, x1, y1)
+}
+
+//////////////////////////////
+// Transform in place
+//////////////////////////////
+
+// RandomizePosition randomizes the position of this triangle
+func (c *Circle) RandomizePosition(amount float64) {
+	c.X += random.FloatRange(-amount, amount)
+	c.Y += random.FloatRange(-amount, amount)
+}
+
+// RandomizeRadius randomizes the radius of this triangle
+func (c *Circle) RandomizeRadius(amount float64) {
+	c.Radius += random.FloatRange(-amount, amount)
+	c.Radius = math.Max(c.Radius, 0)
+}
+
+// Scale scales this circle on the x and y axes, as well as its size.
+func (c *Circle) Scale(scale float64) {
+	c.X *= scale
+	c.Y *= scale
+	c.Radius *= scale
+}
+
+// ScaleFrom scales this circle on the x and y axes, with the given x, y location as a center.
+func (c *Circle) ScaleFrom(x, y, scale float64) {
+	c.Translate(-x, -y)
+	c.X *= scale
+	c.Y *= scale
+	c.Radius *= scale
+	c.Translate(x, y)
+}
+
+// ScaleLocal scales this circle's radius only.
+func (c *Circle) ScaleLocal(scale float64) {
+	c.Radius *= scale
+}
+
+// Translate moves this circle on the x and y axes.
+func (c *Circle) Translate(x float64, y float64) {
+	c.X += x
+	c.Y += y
+}
+
+// Rotate rotates a circle around the origin.
+func (c *Circle) Rotate(angle float64) {
+	x := c.X*math.Cos(angle) + c.Y*math.Sin(angle)
+	y := c.Y*math.Cos(angle) - c.X*math.Sin(angle)
+	c.X = x
+	c.Y = y
+}
+
+// RotateFrom rotates a circle around the given x, y location.
+func (c *Circle) RotateFrom(x, y float64, angle float64) {
+	c.Translate(-x, -y)
+
+	x1 := c.X*math.Cos(angle) + c.Y*math.Sin(angle)
+	y1 := c.Y*math.Cos(angle) - c.X*math.Sin(angle)
+	c.X = x1
+	c.Y = y1
+	c.Translate(x, y)
+}
+
+//////////////////////////////
+// Return transformed
+//////////////////////////////
+
+// RandomizedPosition returns a new circle with a randomized position.
+func (c *Circle) RandomizedPosition(amount float64) *Circle {
+	c2 := NewCircle(c.X, c.Y, c.Radius)
+	c2.RandomizePosition(amount)
+	return c2
+}
+
+// RandomizedRadius returns a new circle with a randomized radius.
+func (c *Circle) RandomizedRadius(amount float64) *Circle {
+	c2 := NewCircle(c.X, c.Y, c.Radius)
+	c2.RandomizeRadius(amount)
+	return c2
+}
+
+// Scaled returns a new circle scaled.
+func (c *Circle) Scaled(scale float64) *Circle {
+	c2 := NewCircle(c.X, c.Y, c.Radius)
+	c2.Scale(scale)
+	return c2
+}
+
+// ScaledFrom returns a new circle scaled.
+func (c *Circle) ScaledFrom(x, y, scale float64) *Circle {
+	c2 := NewCircle(c.X, c.Y, c.Radius)
+	c2.ScaleFrom(x, y, scale)
+	return c2
+}
+
+// ScaledLocal returns a new circle scaled.
+func (c *Circle) ScaledLocal(scale float64) *Circle {
+	c2 := NewCircle(c.X, c.Y, c.Radius)
+	c2.ScaleLocal(scale)
+	return c2
+}
+
+// Translated returns a new circle translated.
+func (c *Circle) Translated(tx, ty float64) *Circle {
+	c2 := NewCircle(c.X, c.Y, c.Radius)
+	c2.Translate(tx, ty)
+	return c2
+}
+
+// Rotated returns a new circle rotated.
+func (c *Circle) Rotated(angle float64) *Circle {
+	c2 := NewCircle(c.X, c.Y, c.Radius)
+	c2.Rotate(angle)
+	return c2
+}
+
+// RotatedFrom returns a new circle rotated.
+func (c *Circle) RotatedFrom(x, y, angle float64) *Circle {
+	c2 := NewCircle(c.X, c.Y, c.Radius)
+	c2.RotateFrom(x, y, angle)
+	return c2
 }
