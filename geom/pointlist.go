@@ -253,13 +253,13 @@ func (p PointList) Unique() PointList {
 	return temp
 }
 
-// Clone returns a shallow copy of this PointList.
+// Clone returns a copy of this PointList.
 func (p PointList) Clone() PointList {
 	temp := NewPointList()
-	for _, p := range p {
-		temp.Add(p)
+	for _, point := range p {
+		temp.AddXY(point.X, point.Y)
 	}
-	return p
+	return temp
 }
 
 // DeepClone returns a shallow copy of this PointList.
