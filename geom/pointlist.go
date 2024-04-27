@@ -95,6 +95,15 @@ func (p PointList) Last() *Point {
 	return p[len(p)-1]
 }
 
+// Get returns the point at the given index.
+// If the index is negative, it counts from the end of the list.
+func (p PointList) Get(index int) *Point {
+	if index < 0 {
+		index = len(p) + index
+	}
+	return p[index]
+}
+
 // Randomize randomizes all the points in a list.
 func (p *PointList) Randomize(rx, ry float64) {
 	for _, point := range *p {
