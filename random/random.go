@@ -200,7 +200,8 @@ func (r *Random) WeightedBool(weight float64) bool {
 	return r.Float() < weight
 }
 
-// Power returns a random number raised to a power.
+// Power returns a random number between min and max.
+// The higher the power, the more the result will be skewed towards min.
 func (r *Random) Power(min, max, power float64) float64 {
 	return min + math.Pow(r.Float(), power)*(max-min)
 }
