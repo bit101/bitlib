@@ -9,7 +9,7 @@ import (
 )
 
 // PoissonDiskSampling returns a poisson disk sampling of points
-func PoissonDiskSampling(width, height, radius float64, tries int) PointList {
+func PoissonDiskSampling(x, y, width, height, radius float64, tries int) PointList {
 	points := NewPointList()
 	active := NewPointList()
 	cellSize := math.Floor(radius / math.Sqrt(2))
@@ -53,6 +53,7 @@ func PoissonDiskSampling(width, height, radius float64, tries int) PointList {
 
 	}
 
+	points.Translate(x, y)
 	return points
 }
 
