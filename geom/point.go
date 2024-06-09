@@ -77,6 +77,11 @@ func (p *Point) Equals(other *Point) bool {
 	return true
 }
 
+// Clone returns a copy of this point.
+func (p *Point) Clone() *Point {
+	return NewPoint(p.X, p.Y)
+}
+
 // Coords returns the x, y coords of this point.
 func (p *Point) Coords() (float64, float64) {
 	return p.X, p.Y
