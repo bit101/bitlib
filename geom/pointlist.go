@@ -277,5 +277,5 @@ func (p PointList) DeepClone() PointList {
 	for _, p := range p {
 		temp.AddXY(p.X, p.Y)
 	}
-	return p
+	return temp
 }
