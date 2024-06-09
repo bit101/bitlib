@@ -37,3 +37,99 @@ func TestPointListNegativeGetOutOfRange(t *testing.T) {
 	list.Get(-11)
 	t.Errorf("did not panic")
 }
+
+func TestPointListCull(t *testing.T) {
+	list := NewPointList()
+	for range 100 {
+		list.Add(RandomPointInRect(0, 0, 100, 100))
+	}
+	for range 150 {
+		list.Add(RandomPointInRect(100, 0, 100, 100))
+	}
+	count := len(list)
+	exp := 250
+
+	if count != exp {
+		t.Errorf("expected %d, got %d", exp, count)
+	}
+
+	list.Cull(func(p *Point) bool {
+		return p.X >= 100
+	})
+
+	count = len(list)
+	exp = 150
+
+	if count != exp {
+		t.Errorf("expected %d, got %d", exp, count)
+	}
+}
+
+func TestPointListCulled(t *testing.T) {
+	list := NewPointList()
+	for range 100 {
+		list.Add(RandomPointInRect(0, 0, 100, 100))
+	}
+	for range 150 {
+		list.Add(RandomPointInRect(100, 0, 100, 100))
+	}
+	count := len(list)
+	exp := 250
+
+	if count != exp {
+		t.Errorf("expected %d, got %d", exp, count)
+	}
+
+	list2 := list.Culled(func(p *Point) bool {
+		return p.X >= 100
+	})
+
+	// no change to original list
+	count = len(list)
+
+	if count != exp {
+		t.Errorf("expected %d, got %d", exp, count)
+	}
+
+	// new list is smaller
+	count = len(list2)
+	exp = 150
+
+	if count != exp {
+		t.Errorf("expected %d, got %d", exp, count)
+	}
+}
+
+func TestPointListSplit(t *testing.T) {
+	list := NewPointList()
+	for range 100 {
+		list.Add(RandomPointInRect(0, 0, 100, 100))
+	}
+	for range 150 {
+		list.Add(RandomPointInRect(100, 0, 100, 100))
+	}
+	count := len(list)
+	exp := 250
+
+	if count != exp {
+		t.Errorf("expected %d, got %d", exp, count)
+	}
+
+	removed := list.Split(func(p *Point) bool {
+		return p.X >= 100
+	})
+
+	count = len(list)
+	exp = 150
+
+	countRemoved := len(removed)
+	expRemoved := 100
+
+	if count != exp {
+		t.Errorf("expected %d, got %d", exp, count)
+	}
+
+	if countRemoved != expRemoved {
+		t.Errorf("expected %d, got %d", expRemoved, countRemoved)
+	}
+}

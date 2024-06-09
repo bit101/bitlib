@@ -125,15 +125,15 @@ func (p PointList) Get(index int) *Point {
 // Transform in place.
 //////////////////////////////
 
-// Cull returns a new point list of points from this list that match a test
-func (p PointList) Cull(test func(*Point) bool) PointList {
+// Cull removes any points from the list that don't match the test.
+func (p *PointList) Cull(test func(*Point) bool) {
 	out := NewPointList()
-	for _, point := range p {
+	for _, point := range *p {
 		if test(point) {
 			out.Add(point)
 		}
 	}
-	return out
+	*p = out
 }
 
 // Normalize normalizes all the points in this list.
@@ -185,6 +185,16 @@ func (p *PointList) ScaleFrom(x, y, sx, sy float64) {
 	for _, point := range *p {
 		point.ScaleFrom(x, y, sx, sy)
 	}
+}
+
+// Split removes any points from the list that do not match the test,
+// and then returns those removed points as a new list.
+func (p *PointList) Split(test func(*Point) bool) PointList {
+	culled := p.Culled(func(p *Point) bool {
+		return !test(p)
+	})
+	p.Cull(test)
+	return culled
 }
 
 // Translate translates all the points in a list.
@@ -288,4 +298,92 @@ func (p PointList) SortDistFrom(x, y float64) PointList {
 		return 0
 	})
 	return temp
+}
+
+//////////////////////////////
+// Transform and return new.
+//////////////////////////////
+
+// Culled returns a new point list of points from this list that match a test
+func (p PointList) Culled(test func(*Point) bool) PointList {
+	p1 := p.Clone()
+	p1.Cull(test)
+	return p1
+}
+
+// Normalized normalizes all the points in this list.
+func (p *PointList) Normalized() PointList {
+	p1 := p.Clone()
+	p1.Normalize()
+	return p1
+}
+
+// Noisified warps the point locations with simplex noise
+func (p *PointList) Noisified(sx, sy, z, offset float64) PointList {
+	p1 := p.Clone()
+	p1.Noisify(sx, sy, z, offset)
+	return p1
+}
+
+// Randomized randomizes all the points in a list.
+func (p *PointList) Randomized(rx, ry float64) PointList {
+	p1 := p.Clone()
+	p1.Randomize(rx, ry)
+	return p1
+}
+
+// Rotated rotates all the points in a list.
+func (p *PointList) Rotated(angle float64) PointList {
+	p1 := p.Clone()
+	p1.Rotate(angle)
+	return p1
+}
+
+// RotatedFrom rotates all the points in a list using the x, y location as a center.
+func (p *PointList) RotatedFrom(x, y float64, angle float64) PointList {
+	p1 := p.Clone()
+	p1.RotateFrom(x, y, angle)
+	return p1
+}
+
+// Scaled scales all the points in a list.
+func (p *PointList) Scaled(sx, sy float64) PointList {
+	p1 := p.Clone()
+	p1.Scale(sx, sy)
+	return p1
+}
+
+// ScaledFrom scales all the points in a list using the x, y location as a center.
+func (p *PointList) ScaledFrom(x, y, sx, sy float64) PointList {
+	p1 := p.Clone()
+	p1.ScaleFrom(x, y, sx, sy)
+	return p1
+}
+
+// Translated translates all the points in a list.
+func (p *PointList) Translated(x, y float64) PointList {
+	p1 := p.Clone()
+	p1.Translate(x, y)
+	return p1
+}
+
+// Uniqued returns a new PointList with any duplicate points removed.
+func (p PointList) Uniqued() PointList {
+	p1 := p.Clone()
+	p1.Unique()
+	return p1
+}
+
+// UniScaled scales all the points in a list.
+func (p *PointList) UniScaled(scale float64) PointList {
+	p1 := p.Clone()
+	p1.UniScale(scale)
+	return p1
+}
+
+// UniScaledFrom scales all the points in a list using the x, y location as a center.
+func (p *PointList) UniScaledFrom(x, y, scale float64) PointList {
+	p1 := p.Clone()
+	p1.UniScaleFrom(x, y, scale)
+	return p1
 }
