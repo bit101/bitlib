@@ -13,6 +13,10 @@ type Point struct {
 	X, Y float64
 }
 
+//////////////////////////////
+// Creation funcs
+//////////////////////////////
+
 // NewPoint creates a new point.
 func NewPoint(x, y float64) *Point {
 	return &Point{X: x, Y: y}
@@ -62,6 +66,35 @@ func RandomPointInTriangle(A, B, C *Point) *Point {
 	return NewPoint(a*A.X+b*B.X+c*C.X, a*A.Y+b*B.Y+c*C.Y)
 }
 
+// BezierPoint calculates a point along a Bezier curve.
+func BezierPoint(t float64, p0 *Point, p1 *Point, p2 *Point, p3 *Point) *Point {
+	oneMinusT := 1.0 - t
+	m0 := oneMinusT * oneMinusT * oneMinusT
+	m1 := 3.0 * oneMinusT * oneMinusT * t
+	m2 := 3.0 * oneMinusT * t * t
+	m3 := t * t * t
+	return &Point{
+		m0*p0.X + m1*p1.X + m2*p2.X + m3*p3.X,
+		m0*p0.Y + m1*p1.Y + m2*p2.Y + m3*p3.Y,
+	}
+}
+
+// QuadraticPoint calculated a point along a quadratic Bezier curve.
+func QuadraticPoint(t float64, p0 *Point, p1 *Point, p2 *Point) *Point {
+	oneMinusT := 1.0 - t
+	m0 := oneMinusT * oneMinusT
+	m1 := 2.0 * oneMinusT * t
+	m2 := t * t
+	return &Point{
+		m0*p0.X + m1*p1.X + m2*p2.X,
+		m0*p0.Y + m1*p1.Y + m2*p2.Y,
+	}
+}
+
+//////////////////////////////
+// Misc methods
+//////////////////////////////
+
 // Equals returns whether this point is equal to another point.
 func (p *Point) Equals(other *Point) bool {
 	d := 0.000001
@@ -107,31 +140,6 @@ func (p *Point) AngleTo(o *Point) float64 {
 	return math.Atan2(o.Y-p.Y, o.X-p.X)
 }
 
-// BezierPoint calculates a point along a Bezier curve.
-func BezierPoint(t float64, p0 *Point, p1 *Point, p2 *Point, p3 *Point) *Point {
-	oneMinusT := 1.0 - t
-	m0 := oneMinusT * oneMinusT * oneMinusT
-	m1 := 3.0 * oneMinusT * oneMinusT * t
-	m2 := 3.0 * oneMinusT * t * t
-	m3 := t * t * t
-	return &Point{
-		m0*p0.X + m1*p1.X + m2*p2.X + m3*p3.X,
-		m0*p0.Y + m1*p1.Y + m2*p2.Y + m3*p3.Y,
-	}
-}
-
-// QuadraticPoint calculated a point along a quadratic Bezier curve.
-func QuadraticPoint(t float64, p0 *Point, p1 *Point, p2 *Point) *Point {
-	oneMinusT := 1.0 - t
-	m0 := oneMinusT * oneMinusT
-	m1 := 2.0 * oneMinusT * t
-	m2 := t * t
-	return &Point{
-		m0*p0.X + m1*p1.X + m2*p2.X,
-		m0*p0.Y + m1*p1.Y + m2*p2.Y,
-	}
-}
-
 // Clockwise returns whether or not the three points listed are in clockwise order
 func Clockwise(p1, p2, p3 *Point) bool {
 	return (p1.X-p3.X)*(p2.Y-p3.Y)-(p2.X-p3.X)*(p1.Y-p3.Y) > 0
@@ -141,41 +149,16 @@ func Clockwise(p1, p2, p3 *Point) bool {
 // Transform in place
 //////////////////////////////
 
+// Normalize normalizes each component of this point, in place.
+func (p *Point) Normalize() {
+	mag := p.Magnitude()
+	p.X /= mag
+	p.Y /= mag
+}
+
 // Randomize randomizes this point.
 func (p *Point) Randomize(rx, ry float64) {
 	p.Translate(random.FloatRange(-rx, rx), random.FloatRange(-ry, ry))
-}
-
-// Scale scales this point on the x and y axes.
-func (p *Point) Scale(scaleX float64, scaleY float64) {
-	p.X *= scaleX
-	p.Y *= scaleY
-}
-
-// ScaleFrom scales this point on the x and y axes, with the given x, y location as a center.
-func (p *Point) ScaleFrom(x, y, scaleX float64, scaleY float64) {
-	p.Translate(-x, -y)
-	p.X *= scaleX
-	p.Y *= scaleY
-	p.Translate(x, y)
-}
-
-// UniScale scales this point by the same amount on the x and y axes.
-func (p *Point) UniScale(scale float64) {
-	p.X *= scale
-	p.Y *= scale
-}
-
-// UniScaleFrom scales this point by the same amount on the x and y axes,
-// given the x, y location as a center
-func (p *Point) UniScaleFrom(x, y, scale float64) {
-	p.ScaleFrom(x, y, scale, scale)
-}
-
-// Translate moves this point on the x and y axes.
-func (p *Point) Translate(x float64, y float64) {
-	p.X += x
-	p.Y += y
 }
 
 // Rotate rotates this point around the origin.
@@ -197,56 +180,101 @@ func (p *Point) RotateFrom(x, y float64, angle float64) {
 	p.Translate(x, y)
 }
 
+// Scale scales this point on the x and y axes.
+func (p *Point) Scale(scaleX float64, scaleY float64) {
+	p.X *= scaleX
+	p.Y *= scaleY
+}
+
+// ScaleFrom scales this point on the x and y axes, with the given x, y location as a center.
+func (p *Point) ScaleFrom(x, y, scaleX float64, scaleY float64) {
+	p.Translate(-x, -y)
+	p.X *= scaleX
+	p.Y *= scaleY
+	p.Translate(x, y)
+}
+
+// Translate moves this point on the x and y axes.
+func (p *Point) Translate(x float64, y float64) {
+	p.X += x
+	p.Y += y
+}
+
+// UniScale scales this point by the same amount on the x and y axes.
+func (p *Point) UniScale(scale float64) {
+	p.X *= scale
+	p.Y *= scale
+}
+
+// UniScaleFrom scales this point by the same amount on the x and y axes,
+// given the x, y location as a center
+func (p *Point) UniScaleFrom(x, y, scale float64) {
+	p.ScaleFrom(x, y, scale, scale)
+}
+
 //////////////////////////////
 // Return transformed copy
 //////////////////////////////
 
+// Normalized returns a copy of this point, normalized.
+func (p *Point) Normalized() *Point {
+	p1 := p.Clone()
+	p1.Normalize()
+	return p1
+}
+
 // Randomized returns a new point, randomized from this.
 func (p *Point) Randomized(rx, ry float64) *Point {
-	p2 := NewPoint(p.X, p.Y)
-	p2.Randomize(rx, ry)
-	return p2
-}
-
-// Scaled creates a new point, a scaled version of this point.
-func (p *Point) Scaled(scaleX float64, scaleY float64) *Point {
-	return NewPoint(p.X*scaleX, p.Y*scaleY)
-}
-
-// ScaledFrom creates a new point, scaled from a given x, y location.
-func (p *Point) ScaledFrom(x, y, scaleX, scaleY float64) *Point {
-	p2 := NewPoint(p.X, p.Y)
-	p2.ScaleFrom(x, y, scaleX, scaleY)
-	return p2
-}
-
-// UniScaled creates a new point, a scaled version of this point.
-func (p *Point) UniScaled(scale float64) *Point {
-	return NewPoint(p.X*scale, p.Y*scale)
-}
-
-// UniScaledFrom creates a new point, scaled from a given x, y location.
-func (p *Point) UniScaledFrom(x, y, scale float64) *Point {
-	p2 := NewPoint(p.X, p.Y)
-	p2.UniScaleFrom(x, y, scale)
-	return p2
-}
-
-// Translated creates a new point, a translated version of this point.
-func (p *Point) Translated(tx, ty float64) *Point {
-	return NewPoint(p.X+tx, p.Y+ty)
+	p1 := p.Clone()
+	p1.Randomize(rx, ry)
+	return p1
 }
 
 // Rotated creates a new point, a rotated version of this point.
 func (p *Point) Rotated(angle float64) *Point {
-	p2 := NewPoint(p.X, p.Y)
-	p2.Rotate(angle)
-	return p2
+	p1 := p.Clone()
+	p1.Rotate(angle)
+	return p1
 }
 
 // RotatedFrom creates a new point, rotated from the given x, y location.
 func (p *Point) RotatedFrom(x, y, angle float64) *Point {
-	p2 := NewPoint(p.X, p.Y)
-	p2.RotateFrom(x, y, angle)
-	return p2
+	p1 := p.Clone()
+	p1.RotateFrom(x, y, angle)
+	return p1
+}
+
+// Scaled creates a new point, a scaled version of this point.
+func (p *Point) Scaled(scaleX float64, scaleY float64) *Point {
+	p1 := p.Clone()
+	p1.Scale(scaleX, scaleY)
+	return p1
+}
+
+// ScaledFrom creates a new point, scaled from a given x, y location.
+func (p *Point) ScaledFrom(x, y, scaleX, scaleY float64) *Point {
+	p1 := p.Clone()
+	p1.ScaleFrom(x, y, scaleX, scaleY)
+	return p1
+}
+
+// Translated creates a new point, a translated version of this point.
+func (p *Point) Translated(tx, ty float64) *Point {
+	p1 := p.Clone()
+	p1.Translate(tx, ty)
+	return p1
+}
+
+// UniScaled creates a new point, a scaled version of this point.
+func (p *Point) UniScaled(scale float64) *Point {
+	p1 := p.Clone()
+	p1.UniScale(scale)
+	return p1
+}
+
+// UniScaledFrom creates a new point, scaled from a given x, y location.
+func (p *Point) UniScaledFrom(x, y, scale float64) *Point {
+	p1 := p.Clone()
+	p1.UniScaleFrom(x, y, scale)
+	return p1
 }
