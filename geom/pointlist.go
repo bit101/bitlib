@@ -13,6 +13,10 @@ import (
 // PointList is a slice of Points
 type PointList []*Point
 
+//////////////////////////////
+// Creation funcs
+//////////////////////////////
+
 // NewPointList creates a new point list
 func NewPointList() PointList {
 	return PointList{}
@@ -64,6 +68,19 @@ func PointGrid(x, y, w, h, xres, yres float64) PointList {
 	return list
 }
 
+//////////////////////////////
+// Misc methods
+//////////////////////////////
+
+// Clone returns a deep copy of this PointList.
+func (p PointList) Clone() PointList {
+	temp := NewPointList()
+	for _, p := range p {
+		temp.Add(p.Clone())
+	}
+	return temp
+}
+
 // Add adds a point to the list
 func (p *PointList) Add(point *Point) {
 	*p = append(*p, point)
@@ -104,45 +121,41 @@ func (p PointList) Get(index int) *Point {
 	return p[index]
 }
 
+//////////////////////////////
+// Transform in place.
+//////////////////////////////
+
+// Cull returns a new point list of points from this list that match a test
+func (p PointList) Cull(test func(*Point) bool) PointList {
+	out := NewPointList()
+	for _, point := range p {
+		if test(point) {
+			out.Add(point)
+		}
+	}
+	return out
+}
+
+// Normalize normalizes all the points in this list.
+func (p *PointList) Normalize() {
+	for _, point := range *p {
+		point.Normalize()
+	}
+}
+
+// Noisify warps the point locations with simplex noise
+func (p *PointList) Noisify(sx, sy, z, offset float64) {
+	for _, point := range *p {
+		t := noise.Simplex3(point.X*sx, point.Y*sy, z) * blmath.Tau
+		point.X += math.Cos(t) * offset
+		point.Y += math.Sin(t) * offset
+	}
+}
+
 // Randomize randomizes all the points in a list.
 func (p *PointList) Randomize(rx, ry float64) {
 	for _, point := range *p {
 		point.Randomize(rx, ry)
-	}
-}
-
-// Scale scales all the points in a list.
-func (p *PointList) Scale(sx, sy float64) {
-	for _, point := range *p {
-		point.Scale(sx, sy)
-	}
-}
-
-// ScaleFrom scales all the points in a list using the x, y location as a center.
-func (p *PointList) ScaleFrom(x, y, sx, sy float64) {
-	for _, point := range *p {
-		point.ScaleFrom(x, y, sx, sy)
-	}
-}
-
-// UniScale scales all the points in a list.
-func (p *PointList) UniScale(scale float64) {
-	for _, point := range *p {
-		point.UniScale(scale)
-	}
-}
-
-// UniScaleFrom scales all the points in a list using the x, y location as a center.
-func (p *PointList) UniScaleFrom(x, y, scale float64) {
-	for _, point := range *p {
-		point.UniScaleFrom(x, y, scale)
-	}
-}
-
-// Translate translates all the points in a list.
-func (p *PointList) Translate(x, y float64) {
-	for _, point := range *p {
-		point.Translate(x, y)
 	}
 }
 
@@ -160,29 +173,62 @@ func (p *PointList) RotateFrom(x, y float64, angle float64) {
 	}
 }
 
-// Noisify warps the point locations with simplex noise
-func (p *PointList) Noisify(sx, sy, z, offset float64) {
+// Scale scales all the points in a list.
+func (p *PointList) Scale(sx, sy float64) {
 	for _, point := range *p {
-		t := noise.Simplex3(point.X*sx, point.Y*sy, z) * blmath.Tau
-		point.X += math.Cos(t) * offset
-		point.Y += math.Sin(t) * offset
+		point.Scale(sx, sy)
 	}
 }
 
-// PointListCullTest is a function that takes a point and returns a bool.
-// Used for culling points from a list.
-type PointListCullTest func(*Point) bool
+// ScaleFrom scales all the points in a list using the x, y location as a center.
+func (p *PointList) ScaleFrom(x, y, sx, sy float64) {
+	for _, point := range *p {
+		point.ScaleFrom(x, y, sx, sy)
+	}
+}
 
-// Cull returns a new point list of points from this list that match a test
-func (p PointList) Cull(test PointListCullTest) PointList {
-	out := NewPointList()
-	for _, point := range p {
-		if test(point) {
-			out.Add(point)
+// Translate translates all the points in a list.
+func (p *PointList) Translate(x, y float64) {
+	for _, point := range *p {
+		point.Translate(x, y)
+	}
+}
+
+// Unique returns a new PointList with any duplicate points removed.
+func (p PointList) Unique() PointList {
+	temp := NewPointList()
+	for i := 0; i < len(p); i++ {
+		found := false
+		for j := 0; j < len(temp); j++ {
+			if p[i].Equals(temp[j]) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			temp.Add(p[i])
 		}
 	}
-	return out
+	return temp
 }
+
+// UniScale scales all the points in a list.
+func (p *PointList) UniScale(scale float64) {
+	for _, point := range *p {
+		point.UniScale(scale)
+	}
+}
+
+// UniScaleFrom scales all the points in a list using the x, y location as a center.
+func (p *PointList) UniScaleFrom(x, y, scale float64) {
+	for _, point := range *p {
+		point.UniScaleFrom(x, y, scale)
+	}
+}
+
+//////////////////////////////
+// Sort in place
+//////////////////////////////
 
 // SortXY sorts the list by x position, deciding matches with y
 func (p PointList) SortXY() PointList {
@@ -241,32 +287,5 @@ func (p PointList) SortDistFrom(x, y float64) PointList {
 		}
 		return 0
 	})
-	return temp
-}
-
-// Unique returns a new PointList with any duplicate points removed.
-func (p PointList) Unique() PointList {
-	temp := NewPointList()
-	for i := 0; i < len(p); i++ {
-		found := false
-		for j := 0; j < len(temp); j++ {
-			if p[i].Equals(temp[j]) {
-				found = true
-				break
-			}
-		}
-		if !found {
-			temp.Add(p[i])
-		}
-	}
-	return temp
-}
-
-// Clone returns a deep copy of this PointList.
-func (p PointList) Clone() PointList {
-	temp := NewPointList()
-	for _, p := range p {
-		temp.Add(p.Clone())
-	}
 	return temp
 }
