@@ -32,6 +32,9 @@ func Difference(a, b float64) float64 {
 
 // Norm returns a normalized value in a min/max range.
 func Norm(value float64, min float64, max float64) float64 {
+	if min == max {
+		return 0.5
+	}
 	return (value - min) / (max - min)
 }
 
