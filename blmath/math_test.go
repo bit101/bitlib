@@ -167,6 +167,9 @@ func TestMap(t *testing.T) {
 		{250, 200, 300, 0, Tau, math.Pi},
 		{225, 200, 300, 0, Tau, HalfPi},
 		{300, 200, 300, 0, Tau, Tau},
+
+		// min/max equal
+		{5, 100, 100, 300, 400, 350},
 	}
 
 	for _, tc := range tests {

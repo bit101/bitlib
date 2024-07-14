@@ -125,6 +125,14 @@ func StringAlpha(length int) string {
 	return rng.StringAlpha(length)
 }
 
+// Element returns a random element from the slice.
+// Can't make this an instance method because generic methods cannot contain typed params
+// and the receiver is actually a type param.
+func Element[T any](list []T) T {
+	index := IntRange(0, len(list))
+	return list[index]
+}
+
 // ================================
 // Instance methods
 // ================================
