@@ -25,9 +25,14 @@ func NewLineFromPoints(p0, p1 *Point) *Line {
 	return NewLine(p0.X, p0.Y, p1.X, p1.Y)
 }
 
+// NewLineFromSegment creates a new line from an existing Segment.
+func NewLineFromSegment(seg *Segment) *Line {
+	return NewLine(seg.X0, seg.Y0, seg.X1, seg.Y1)
+}
+
 // HitSegment reports the point of intersection of a line and a line segment.
 func (l *Line) HitSegment(s *Segment) (float64, float64, bool) {
-	return SegmentOnSegment(s.X0, s.Y0, s.X1, s.Y1, l.X0, l.Y0, l.X1, l.Y1)
+	return SegmentOnLine(s.X0, s.Y0, s.X1, s.Y1, l.X0, l.Y0, l.X1, l.Y1)
 }
 
 // HitLine reports the point of intersection of two lines.
@@ -62,6 +67,7 @@ func (l *Line) Perpendicular(p *Point) *Line {
 	return NewLine(p.X, p.Y, p.X-dy, p.Y+dx)
 }
 
+// Parallel returns a line parallel to this line, at a certain distance.
 func (l *Line) Parallel(dist float64) *Line {
 	angle := l.Angle()
 	cos := math.Cos(angle)
@@ -72,5 +78,4 @@ func (l *Line) Parallel(dist float64) *Line {
 		l.X1+cos*dist,
 		l.Y1+sin*dist,
 	)
-
 }

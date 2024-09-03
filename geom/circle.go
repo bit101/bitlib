@@ -28,6 +28,13 @@ func NewCircleFromPoint(center *Point, r float64) *Circle {
 	return NewCircle(center.X, center.Y, r)
 }
 
+// NewCircleFromPoints returns a new circle that intersects the three given points.
+// If the points are collinear, it will return nil.
+func NewCircleFromPoints(p0, p1, p2 *Point) *Circle {
+	return NewTriangleFromPoints(p0, p1, p2).CircumCircle()
+
+}
+
 // Hit reports whether this circle intersects another circle.
 func (c *Circle) Hit(d *Circle) bool {
 	return CircleOnCircle(c.X, c.Y, c.Radius, d.X, d.Y, d.Radius)
