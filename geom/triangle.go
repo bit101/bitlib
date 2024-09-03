@@ -3,6 +3,7 @@ package geom
 
 import (
 	"fmt"
+	"log"
 	"math"
 
 	"github.com/bit101/bitlib/blmath"
@@ -52,6 +53,15 @@ func EquilateralTriangleFromTwoPoints(p0, p1 *Point, clockwise bool) *Triangle {
 		p0.Y+math.Sin(angle)*dist,
 	)
 	return NewTriangleFromPoints(p0, p1, p2)
+}
+
+// IsoscoleseTriangle creates a new trangle with the given point and two sides of the given length with the given angle.
+func IsoscoleseTriangle(point *Point, sideLength, angle float64) *Triangle {
+	x0 := point.X + math.Cos(math.Pi/2-angle/2)*sideLength
+	y0 := point.Y + math.Sin(math.Pi/2-angle/2)*sideLength
+	x1 := point.X + math.Cos(math.Pi/2+angle/2)*sideLength
+	y1 := point.Y + math.Sin(math.Pi/2+angle/2)*sideLength
+	return NewTriangle(x0, y0, point.X, point.Y, x1, y1)
 }
 
 // AngleFromTriangleSideLengths returns one angle of a triangle where the lengths of each side are known.
@@ -106,8 +116,8 @@ func (t *Triangle) CircumCircle() *Circle {
 
 // InCenter returns the point representing the incenter of the triangle.
 func (t *Triangle) InCenter() *Point {
-	b := bisect(t.PointA, t.PointB, t.PointC)
-	a := bisect(t.PointB, t.PointA, t.PointC)
+	b := Bisect(t.PointA, t.PointB, t.PointC, 100)
+	a := Bisect(t.PointB, t.PointA, t.PointC, 100)
 	lineB := NewLine(b.X, b.Y, t.PointB.X, t.PointB.Y)
 	lineA := NewLine(a.X, a.Y, t.PointA.X, t.PointA.Y)
 	x, y, hit := lineA.HitLine(lineB)
@@ -125,11 +135,12 @@ func (t *Triangle) InCircle() *Circle {
 	return NewCircle(center.X, center.Y, radius)
 }
 
-func bisect(pA, pB, pC *Point) *Point {
+// Bisect returns a point that will bisect the angle formed by the three points passed in.
+func Bisect(pA, pB, pC *Point, length float64) *Point {
 	angleA := math.Atan2(pA.Y-pB.Y, pA.X-pB.X)
 	angleC := math.Atan2(pC.Y-pB.Y, pC.X-pB.X)
 	angleBi := angleA + (angleC-angleA)/2
-	return NewPoint(pB.X+math.Cos(angleBi)*100, pB.Y+math.Sin(angleBi)*100)
+	return NewPoint(pB.X+math.Cos(angleBi)*length, pB.Y+math.Sin(angleBi)*length)
 }
 
 // OrthoCenter returns a point representing the orthocenter of the triangle.
@@ -169,6 +180,20 @@ func (t *Triangle) Edges() SegmentList {
 	return edges
 }
 
+// Lengths returns the lenghts of the three sides of this triangle.
+func (t *Triangle) Lengths() []float64 {
+	edges := t.Edges()
+	return []float64{edges[0].Length(), edges[1].Length(), edges[2].Length()}
+}
+
+// Angles returns the three angles of the triangle.
+func (t *Triangle) Angles() []float64 {
+	a := t.PointA.AngleBetween(t.PointB, t.PointC)
+	b := t.PointB.AngleBetween(t.PointA, t.PointC)
+	c := t.PointC.AngleBetween(t.PointA, t.PointB)
+	return []float64{a, b, c}
+}
+
 // Contains returns whether or not the given point is contained by the triangle.
 func (t *Triangle) Contains(p *Point) bool {
 	d1 := Clockwise(p, t.PointA, t.PointB)
@@ -200,6 +225,69 @@ func (t *Triangle) Equals(other *Triangle) bool {
 		return testTwo(t.PointB, t.PointC, other.PointA, other.PointB)
 	}
 	return false
+}
+
+// Altitude returns the altitude of the given point to its opposite side.
+func (t *Triangle) Altitude(index int) float64 {
+	if index < 0 || index > 2 {
+		log.Fatal("index must be from 0 to 2")
+	}
+	p0 := t.Points()[index]
+	p1 := t.Points()[(index+1)%3]
+	p2 := t.Points()[(index+2)%3]
+	return PointDistanceToLine(p0.X, p0.Y, p1.X, p1.Y, p2.X, p2.Y)
+}
+
+// AltitudeLine returns a line that represents the altitude from a given point to its opposite side.
+func (t *Triangle) AltitudeLine(index int) *Segment {
+	if index < 0 || index > 2 {
+		log.Fatal("index must be from 0 to 2")
+	}
+	p0 := t.Points()[index]
+	p1 := t.Points()[(index+1)%3]
+	p2 := t.Points()[(index+2)%3]
+	base := NewLineFromPoints(p1, p2)
+	p3 := base.ClosestPoint(p0)
+	return NewSegmentFromPoints(p0, p3)
+}
+
+// Foot returns the altitude foot of a triangle (intersection of base and altitude).
+func (t *Triangle) Foot(index int) *Point {
+	side := NewSegmentFromPoints(t.Points()[(index+1)%3], t.Points()[(index+2)%3])
+	return side.ClosestPoint(t.Points()[index])
+}
+
+// OrthicTriangle returns the triangle created by the foot of each corner of the triangle.
+func (t *Triangle) OrthicTriangle() *Triangle {
+	p0 := t.Foot(0)
+	p1 := t.Foot(1)
+	p2 := t.Foot(2)
+	return NewTriangleFromPoints(p0, p1, p2)
+}
+
+// MedianLine returns a line segment representing the median from a given point to its opposite side.
+func (t *Triangle) MedianLine(index int) *Segment {
+	if index < 0 || index > 2 {
+		log.Fatal("index must be from 0 to 2")
+	}
+	p0 := t.Points()[index]
+	p1 := t.Points()[(index+1)%3]
+	p2 := t.Points()[(index+2)%3]
+	p3 := LerpPoint(0.5, p1, p2)
+	return NewSegmentFromPoints(p0, p3)
+}
+
+// BisectorLine returns a line segment representing the bisector from a given point to its opposite side.
+func (t *Triangle) BisectorLine(index int) *Segment {
+	if index < 0 || index > 2 {
+		log.Fatal("index must be from 0 to 2")
+	}
+	p0 := t.Points()[index]
+	p1 := t.Points()[(index+1)%3]
+	p2 := t.Points()[(index+2)%3]
+	b := Bisect(p1, p0, p2, 100)
+	x, y, _ := LineOnLine(p0.X, p0.Y, b.X, b.Y, p1.X, p1.Y, p2.X, p2.Y)
+	return NewSegmentFromPoints(p0, NewPoint(x, y))
 }
 
 //////////////////////////////

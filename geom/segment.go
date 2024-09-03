@@ -28,6 +28,16 @@ func NewSegmentFromPoints(p0, p1 *Point) *Segment {
 	return NewSegment(p0.X, p0.Y, p1.X, p1.Y)
 }
 
+// Points returns the two endpoints of this segment as Points.
+func (s *Segment) Points() (*Point, *Point) {
+	return NewPoint(s.X0, s.Y0), NewPoint(s.X1, s.Y1)
+}
+
+// Parallel returns a Line that is parallel to this line, a certain distance away.
+func (s *Segment) Parallel(dist float64) *Line {
+	return NewLineFromSegment(s).Parallel(dist)
+}
+
 // HitSegment returns the point of intersection between this and another segment.
 func (s *Segment) HitSegment(z *Segment) (float64, float64, bool) {
 	return SegmentOnSegment(s.X0, s.Y0, s.X1, s.Y1, z.X0, z.Y0, z.X1, z.Y1)

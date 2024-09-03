@@ -140,6 +140,16 @@ func (p *Point) AngleTo(o *Point) float64 {
 	return math.Atan2(o.Y-p.Y, o.X-p.X)
 }
 
+// AngleBetween returns the angle formed from p0 to this point to p1.
+func (p *Point) AngleBetween(p0, p1 *Point) float64 {
+	d0 := p.Distance(p0)
+	d1 := p.Distance(p1)
+	d2 := p0.Distance(p1)
+	num := (d0*d0 + d1*d1 - d2*d2)
+	denom := (2 * d0 * d1)
+	return math.Acos(num / denom)
+}
+
 // Clockwise returns whether or not the three points listed are in clockwise order
 func Clockwise(p1, p2, p3 *Point) bool {
 	return (p1.X-p3.X)*(p2.Y-p3.Y)-(p2.X-p3.X)*(p1.Y-p3.Y) > 0
