@@ -112,6 +112,17 @@ func (p PointList) Last() *Point {
 	return p[len(p)-1]
 }
 
+// Length returns the measured length along the path created by the points.
+func (p PointList) Length() float64 {
+	total := 0.0
+	for i := range len(p) - 1 {
+		p0 := p[i]
+		p1 := p[i+1]
+		total += p0.Distance(p1)
+	}
+	return total
+}
+
 // Get returns the point at the given index.
 // If the index is negative, it counts from the end of the list.
 func (p PointList) Get(index int) *Point {
@@ -119,6 +130,25 @@ func (p PointList) Get(index int) *Point {
 		index = len(p) + index
 	}
 	return p[index]
+}
+
+// BoundingBox returns a rectangle enclosing all the points in the list.
+func (p PointList) BoundingBox() *Rect {
+	minX, minY := math.MaxFloat64, math.MaxFloat64
+	maxX, maxY := -math.MaxFloat64, -math.MaxFloat64
+	for _, point := range p {
+		minX = math.Min(minX, point.X)
+		minY = math.Min(minY, point.Y)
+		maxX = math.Max(maxX, point.X)
+		maxY = math.Max(maxY, point.Y)
+	}
+	return NewRect(minX, minY, maxX-minX, maxY-minY)
+}
+
+// Center returns the local center of the points in the list.
+func (p PointList) Center() *Point {
+	rect := p.BoundingBox()
+	return NewPoint(rect.X+rect.W/2, rect.Y+rect.H/2)
 }
 
 //////////////////////////////
@@ -134,6 +164,26 @@ func (p *PointList) Cull(test func(*Point) bool) {
 		}
 	}
 	*p = out
+}
+
+// Fisheye applies a fisheye transform from the center of the list.
+func (p *PointList) Fisheye(radius float64) {
+	p.FisheyeFromPoint(p.Center(), radius)
+}
+
+// FisheyeFromPoint applies a fisheye transform from the given point.
+func (p *PointList) FisheyeFromPoint(center *Point, radius float64) {
+	for _, point := range *p {
+		r := center.Distance(point) / radius
+		n := 2.0 / (r + 1)
+		point.X = center.X + n*(point.X-center.X)
+		point.Y = center.Y + n*(point.Y-center.Y)
+	}
+}
+
+// FisheyeFromXY applies a fisheye transform from the given x, y location.
+func (p *PointList) FisheyeFromXY(x, y, radius float64) {
+	p.FisheyeFromPoint(NewPoint(x, y), radius)
 }
 
 // Normalize normalizes all the points in this list.
@@ -173,6 +223,12 @@ func (p *PointList) RotateFrom(x, y float64, angle float64) {
 	}
 }
 
+// RotateLocal rotates all the points in a list from their local center.
+func (p *PointList) RotateLocal(angle float64) {
+	c := p.Center()
+	p.RotateFrom(c.X, c.Y, angle)
+}
+
 // Scale scales all the points in a list.
 func (p *PointList) Scale(sx, sy float64) {
 	for _, point := range *p {
@@ -187,6 +243,12 @@ func (p *PointList) ScaleFrom(x, y, sx, sy float64) {
 	}
 }
 
+// ScaleLocal scales all the points in a list using their local center.
+func (p *PointList) ScaleLocal(sx, sy float64) {
+	c := p.Center()
+	p.ScaleFrom(c.X, c.Y, sx, sy)
+}
+
 // Split removes any points from the list that do not match the test,
 // and then returns those removed points as a new list.
 func (p *PointList) Split(test func(*Point) bool) PointList {
@@ -195,6 +257,33 @@ func (p *PointList) Split(test func(*Point) bool) PointList {
 	})
 	p.Cull(test)
 	return culled
+}
+
+// VortexFromPoint applies a vortex transform from the given point.
+func (p *PointList) VortexFromPoint(center *Point, radius float64) {
+	for _, point := range *p {
+		dist := center.Distance(point)
+		if dist == 0 {
+			dist = 0.001
+		}
+		r := radius/dist + math.Pi/2
+		point.X -= center.X
+		point.Y -= center.Y
+		x := point.X*math.Sin(r) - point.Y*math.Cos(r)
+		y := point.X*math.Cos(r) + point.Y*math.Sin(r)
+		point.X = center.X + x
+		point.Y = center.Y + y
+	}
+}
+
+// VortexFromXY applies a vortex transform from the given x, y location.
+func (p *PointList) VortexFromXY(x, y, radius float64) {
+	p.VortexFromPoint(NewPoint(x, y), radius)
+}
+
+// Vortex applies a vortex transform from the given x, y location.
+func (p *PointList) Vortex(radius float64) {
+	p.VortexFromPoint(p.Center(), radius)
 }
 
 // Translate translates all the points in a list.
@@ -234,6 +323,12 @@ func (p *PointList) UniScaleFrom(x, y, scale float64) {
 	for _, point := range *p {
 		point.UniScaleFrom(x, y, scale)
 	}
+}
+
+// UniScaleLocal scales all the points in a list using their local center.
+func (p *PointList) UniScaleLocal(scale float64) {
+	c := p.Center()
+	p.UniScaleFrom(c.X, c.Y, scale)
 }
 
 //////////////////////////////
