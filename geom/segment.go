@@ -10,16 +10,14 @@ import (
 
 // Segment represents a line segment.
 type Segment struct {
-	X0, Y0, X1, Y1 float64
+	PointA, PointB *Point
 }
 
 // NewSegment creates a new line segment.
 func NewSegment(x0, y0, x1, y1 float64) *Segment {
 	return &Segment{
-		X0: x0,
-		Y0: y0,
-		X1: x1,
-		Y1: y1,
+		NewPoint(x0, y0),
+		NewPoint(x1, y1),
 	}
 }
 
@@ -30,7 +28,7 @@ func NewSegmentFromPoints(p0, p1 *Point) *Segment {
 
 // Points returns the two endpoints of this segment as Points.
 func (s *Segment) Points() (*Point, *Point) {
-	return NewPoint(s.X0, s.Y0), NewPoint(s.X1, s.Y1)
+	return s.PointA, s.PointB
 }
 
 // Parallel returns a Line that is parallel to this line, a certain distance away.
@@ -40,37 +38,37 @@ func (s *Segment) Parallel(dist float64) *Line {
 
 // HitSegment returns the point of intersection between this and another segment.
 func (s *Segment) HitSegment(z *Segment) (float64, float64, bool) {
-	return SegmentOnSegment(s.X0, s.Y0, s.X1, s.Y1, z.X0, z.Y0, z.X1, z.Y1)
+	return SegmentOnSegment(s.PointA.X, s.PointA.Y, s.PointB.X, s.PointB.Y, z.PointA.X, z.PointA.Y, z.PointB.X, z.PointA.Y)
 }
 
 // HitLine returns the point of intersection between this and another line.
 func (s *Segment) HitLine(l *Line) (float64, float64, bool) {
-	return SegmentOnLine(s.X0, s.Y0, s.X1, s.Y1, l.X0, l.Y0, l.X1, l.Y1)
+	return SegmentOnLine(s.PointA.X, s.PointA.Y, s.PointB.X, s.PointB.Y, l.PointA.X, l.PointA.Y, l.PointB.X, l.PointB.Y)
 }
 
 // HitRect returns whether this segment intersects a rectangle.
 func (s *Segment) HitRect(r *Rect) bool {
-	return SegmentOnRect(s.X0, s.Y0, s.X1, s.Y1, r.X, r.Y, r.W, r.H)
+	return SegmentOnRect(s.PointA.X, s.PointA.Y, s.PointB.X, s.PointB.Y, r.X, r.Y, r.W, r.H)
 }
 
 // Length is the length of this segment.
 func (s *Segment) Length() float64 {
-	return math.Hypot(s.X1-s.X0, s.Y1-s.Y0)
+	return math.Hypot(s.PointB.X-s.PointA.X, s.PointB.Y-s.PointA.Y)
 }
 
 // ClosestPoint returns the point on this segment closest to another point.
 func (s *Segment) ClosestPoint(p *Point) *Point {
-	v := VectorBetween(s.X0, s.Y0, p.X, p.Y)
-	d := VectorBetween(s.X0, s.Y0, s.X1, s.Y1).Normalized()
+	v := VectorBetween(s.PointA.X, s.PointA.Y, p.X, p.Y)
+	d := VectorBetween(s.PointA.X, s.PointA.Y, s.PointB.X, s.PointB.Y).Normalized()
 	vs := v.Project(d)
 	if vs < 0 {
-		return NewPoint(s.X0, s.Y0)
+		return s.PointA.Clone()
 	}
 	if vs > s.Length() {
-		return NewPoint(s.X1, s.Y1)
+		return s.PointB.Clone()
 	}
 	t := vs / s.Length()
-	return NewPoint(blmath.Lerp(t, s.X0, s.X1), blmath.Lerp(t, s.Y0, s.Y1))
+	return NewPoint(blmath.Lerp(t, s.PointA.X, s.PointB.X), blmath.Lerp(t, s.PointA.Y, s.PointB.Y))
 }
 
 // DistanceTo returns the distance from this segment to another point.
@@ -84,17 +82,17 @@ func (s *Segment) Equals(other *Segment) bool {
 		return true
 	}
 	d := 0.000001
-	if blmath.Equalish(s.X0, other.X0, d) &&
-		blmath.Equalish(s.Y0, other.Y0, d) &&
-		blmath.Equalish(s.X1, other.X1, d) &&
-		blmath.Equalish(s.Y1, other.Y1, d) {
+	if blmath.Equalish(s.PointA.X, other.PointA.X, d) &&
+		blmath.Equalish(s.PointA.Y, other.PointA.Y, d) &&
+		blmath.Equalish(s.PointB.X, other.PointB.X, d) &&
+		blmath.Equalish(s.PointB.Y, other.PointB.Y, d) {
 		return true
 	}
 
-	if blmath.Equalish(s.X0, other.X1, d) &&
-		blmath.Equalish(s.Y0, other.Y1, d) &&
-		blmath.Equalish(s.X1, other.X0, d) &&
-		blmath.Equalish(s.Y1, other.Y0, d) {
+	if blmath.Equalish(s.PointA.X, other.PointB.X, d) &&
+		blmath.Equalish(s.PointA.Y, other.PointB.Y, d) &&
+		blmath.Equalish(s.PointB.X, other.PointA.X, d) &&
+		blmath.Equalish(s.PointB.Y, other.PointA.Y, d) {
 		return true
 	}
 	return false
@@ -106,32 +104,32 @@ func (s *Segment) Equals(other *Segment) bool {
 
 // Randomize randomizes the endpoints of the segment by the given amount.
 func (s *Segment) Randomize(amount float64) {
-	s.X0 += random.FloatRange(-amount, amount)
-	s.Y0 += random.FloatRange(-amount, amount)
-	s.X1 += random.FloatRange(-amount, amount)
-	s.Y1 += random.FloatRange(-amount, amount)
+	s.PointA.X += random.FloatRange(-amount, amount)
+	s.PointA.Y += random.FloatRange(-amount, amount)
+	s.PointB.X += random.FloatRange(-amount, amount)
+	s.PointB.Y += random.FloatRange(-amount, amount)
 }
 
 // Scale scales a segment the given amount on each axis.
 func (s *Segment) Scale(sx, sy float64) {
-	s.X0 *= sx
-	s.Y0 *= sy
-	s.X1 *= sx
-	s.Y1 *= sy
+	s.PointA.X *= sx
+	s.PointA.Y *= sy
+	s.PointB.X *= sx
+	s.PointB.Y *= sy
 }
 
 // ScaleFrom scales a segment the given amount on each axis, from the given x, y location.
 func (s *Segment) ScaleFrom(x, y, sx, sy float64) {
-	s.X0 = (s.X0-x)*sx + x
-	s.Y0 = (s.Y0-y)*sy + y
-	s.X1 = (s.X1-x)*sx + x
-	s.Y1 = (s.Y1-y)*sy + y
+	s.PointA.X = (s.PointA.X-x)*sx + x
+	s.PointA.Y = (s.PointA.Y-y)*sy + y
+	s.PointB.X = (s.PointB.X-x)*sx + x
+	s.PointB.Y = (s.PointB.Y-y)*sy + y
 }
 
 // ScaleLocal scales a segment the given amount on each axis from its own center
 func (s *Segment) ScaleLocal(sx, sy float64) {
-	cx := (s.X0 + s.X1) / 2
-	cy := (s.Y0 + s.Y1) / 2
+	cx := (s.PointA.X + s.PointB.X) / 2
+	cy := (s.PointA.Y + s.PointB.Y) / 2
 	s.ScaleFrom(cx, cy, sx, sy)
 }
 
@@ -152,44 +150,44 @@ func (s *Segment) UniScaleLocal(scale float64) {
 
 // Translate translates a segment the given amount on each axis.
 func (s *Segment) Translate(x, y float64) {
-	s.X0 += x
-	s.Y0 += y
-	s.X1 += x
-	s.Y1 += y
+	s.PointA.X += x
+	s.PointA.Y += y
+	s.PointB.X += x
+	s.PointB.Y += y
 }
 
 // Rotate rotates a segment around the origin.
 func (s *Segment) Rotate(angle float64) {
 	cos := math.Cos(angle)
 	sin := math.Sin(angle)
-	x0 := cos*s.X0 + sin*s.Y0
-	y0 := cos*s.Y0 - sin*s.X0
-	x1 := cos*s.X1 + sin*s.Y1
-	y1 := cos*s.Y1 - sin*s.X1
-	s.X0 = x0
-	s.Y0 = y0
-	s.X1 = x1
-	s.Y1 = y1
+	x0 := cos*s.PointA.X + sin*s.PointA.Y
+	y0 := cos*s.PointA.Y - sin*s.PointA.X
+	x1 := cos*s.PointB.X + sin*s.PointB.Y
+	y1 := cos*s.PointB.Y - sin*s.PointB.X
+	s.PointA.X = x0
+	s.PointA.Y = y0
+	s.PointB.X = x1
+	s.PointB.Y = y1
 }
 
 // RotateFrom rotates a segment around the given x, y location.
 func (s *Segment) RotateFrom(x, y, angle float64) {
 	cos := math.Cos(angle)
 	sin := math.Sin(angle)
-	x0 := cos*(s.X0-x) + sin*(s.Y0-y)
-	y0 := cos*(s.Y0-y) - sin*(s.X0-x)
-	x1 := cos*(s.X1-x) + sin*(s.Y1-y)
-	y1 := cos*(s.Y1-y) - sin*(s.X1-x)
-	s.X0 = x0 + x
-	s.Y0 = y0 + y
-	s.X1 = x1 + x
-	s.Y1 = y1 + y
+	x0 := cos*(s.PointA.X-x) + sin*(s.PointA.Y-y)
+	y0 := cos*(s.PointA.Y-y) - sin*(s.PointA.X-x)
+	x1 := cos*(s.PointB.X-x) + sin*(s.PointB.Y-y)
+	y1 := cos*(s.PointB.Y-y) - sin*(s.PointB.X-x)
+	s.PointA.X = x0 + x
+	s.PointA.Y = y0 + y
+	s.PointB.X = x1 + x
+	s.PointB.Y = y1 + y
 }
 
 // RotateLocal rotates a segment around its own center.
 func (s *Segment) RotateLocal(angle float64) {
-	cx := (s.X0 + s.X1) / 2
-	cy := (s.Y0 + s.Y1) / 2
+	cx := (s.PointA.X + s.PointB.X) / 2
+	cy := (s.PointA.Y + s.PointB.Y) / 2
 	s.RotateFrom(cx, cy, angle)
 }
 
@@ -199,75 +197,75 @@ func (s *Segment) RotateLocal(angle float64) {
 
 // Randomized returns a randomized segment from this segment.
 func (s *Segment) Randomized(amount float64) *Segment {
-	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2 := NewSegment(s.PointA.X, s.PointA.Y, s.PointB.X, s.PointB.Y)
 	s2.Randomize(amount)
 	return s2
 }
 
 // Scaled returns a new segment scaled by the given amount.
 func (s *Segment) Scaled(sx, sy float64) *Segment {
-	return NewSegment(s.X0*sx, s.Y0*sy, s.X1*sx, s.Y1*sy)
+	return NewSegment(s.PointA.X*sx, s.PointA.Y*sy, s.PointB.X*sx, s.PointB.Y*sy)
 }
 
 // ScaledFrom returns a new segment scaled by the given amount.
 func (s *Segment) ScaledFrom(x, y, sx, sy float64) *Segment {
-	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2 := NewSegment(s.PointA.X, s.PointA.Y, s.PointB.X, s.PointB.Y)
 	s2.ScaleFrom(x, y, sx, sy)
 	return s2
 }
 
 // ScaledLocal returns a new segment scaled by the given amount.
 func (s *Segment) ScaledLocal(sx, sy float64) *Segment {
-	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2 := NewSegment(s.PointA.X, s.PointA.Y, s.PointB.X, s.PointB.Y)
 	s2.ScaleLocal(sx, sy)
 	return s2
 }
 
 // UniScaled returns a new segment scaled by the given amount - the same on both axes.
 func (s *Segment) UniScaled(scale float64) *Segment {
-	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2 := NewSegment(s.PointA.X, s.PointA.Y, s.PointB.X, s.PointB.Y)
 	s2.UniScale(scale)
 	return s2
 }
 
 // UniScaledFrom returns a new segment scaled from the given point.
 func (s *Segment) UniScaledFrom(x, y, scale float64) *Segment {
-	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2 := NewSegment(s.PointA.X, s.PointA.Y, s.PointB.X, s.PointB.Y)
 	s2.ScaledFrom(x, y, scale, scale)
 	return s2
 }
 
 // UniScaledLocal returns a new segment scaled by the given amount - the same on both axes.
 func (s *Segment) UniScaledLocal(scale float64) *Segment {
-	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2 := NewSegment(s.PointA.X, s.PointA.Y, s.PointB.X, s.PointB.Y)
 	s2.UniScaleLocal(scale)
 	return s2
 }
 
 // Translated returns a new segment translated from this.
 func (s *Segment) Translated(x, y float64) *Segment {
-	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2 := NewSegment(s.PointA.X, s.PointA.Y, s.PointB.X, s.PointB.Y)
 	s2.Translate(x, y)
 	return s2
 }
 
 // Rotated returns a new segment rotated from this.
 func (s *Segment) Rotated(angle float64) *Segment {
-	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2 := NewSegment(s.PointA.X, s.PointA.Y, s.PointB.X, s.PointB.Y)
 	s2.Rotate(angle)
 	return s2
 }
 
 // RotatedFrom returns a new segment rotated from this.
 func (s *Segment) RotatedFrom(x, y, angle float64) *Segment {
-	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2 := NewSegment(s.PointA.X, s.PointA.Y, s.PointB.X, s.PointB.Y)
 	s2.RotateFrom(x, y, angle)
 	return s2
 }
 
 // RotatedLocal returns a new segment rotated from this.
 func (s *Segment) RotatedLocal(angle float64) *Segment {
-	s2 := NewSegment(s.X0, s.Y0, s.X1, s.Y1)
+	s2 := NewSegment(s.PointA.X, s.PointA.Y, s.PointB.X, s.PointB.Y)
 	s2.RotateLocal(angle)
 	return s2
 }

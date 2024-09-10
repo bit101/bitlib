@@ -1,6 +1,13 @@
 // Package geom has geometry related structs and funcs.
 package geom
 
+import (
+	"math"
+
+	"github.com/bit101/bitlib/blmath"
+	"github.com/bit101/bitlib/noise"
+)
+
 // SegmentList is a slice of segments
 type SegmentList []*Segment
 
@@ -93,5 +100,17 @@ func (s *SegmentList) RotateFrom(x, y float64, angle float64) {
 func (s *SegmentList) RotateLocal(angle float64) {
 	for _, segment := range *s {
 		segment.RotateLocal(angle)
+	}
+}
+
+func (s *SegmentList) Noisify(sx, sy, z, offset float64) {
+	for _, seg := range *s {
+		PointA, PointB := seg.Points()
+		t := noise.Simplex3(PointA.X*sx, PointA.Y*sy, z) * blmath.Tau
+		seg.PointA.X += math.Cos(t) * offset
+		seg.PointA.Y += math.Sin(t) * offset
+		t = noise.Simplex3(PointB.X*sx, PointB.Y*sy, z) * blmath.Tau
+		seg.PointB.X += math.Cos(t) * offset
+		seg.PointB.Y += math.Sin(t) * offset
 	}
 }
