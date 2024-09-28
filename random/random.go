@@ -85,6 +85,11 @@ func Boolean() bool {
 	return rng.Boolean()
 }
 
+// Sign returns either -1.0 or 1.0 with equal distribution.
+func Sign() float64 {
+	return rng.Sign()
+}
+
 // WeightedBool returns a weighted boolean.
 func WeightedBool(weight float64) bool {
 	return rng.WeightedBool(weight)
@@ -201,6 +206,14 @@ func (r *Random) IntArray(size int, min, max int) []int {
 // Boolean returns a random boolean.
 func (r *Random) Boolean() bool {
 	return r.WeightedBool(0.5)
+}
+
+// Sign returns either -1.0 or 1.0 with equal distribution.
+func (r *Random) Sign() float64 {
+	if r.Float() < 0.5 {
+		return -1.0
+	}
+	return 1.0
 }
 
 // WeightedBool returns a weighted boolean.
