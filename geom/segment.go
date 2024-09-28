@@ -38,7 +38,11 @@ func (s *Segment) Parallel(dist float64) *Line {
 
 // HitSegment returns the point of intersection between this and another segment.
 func (s *Segment) HitSegment(z *Segment) (float64, float64, bool) {
-	return SegmentOnSegment(s.PointA.X, s.PointA.Y, s.PointB.X, s.PointB.Y, z.PointA.X, z.PointA.Y, z.PointB.X, z.PointA.Y)
+	return SegmentOnSegment(
+		s.PointA.X, s.PointA.Y,
+		s.PointB.X, s.PointB.Y,
+		z.PointA.X, z.PointA.Y,
+		z.PointB.X, z.PointB.Y)
 }
 
 // HitLine returns the point of intersection between this and another line.
