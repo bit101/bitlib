@@ -106,7 +106,7 @@ func removeTriangle(triangulation geom.TriangleList, triangle *geom.Triangle) ge
 // addTriangles adds a new triangle to the triangulation based on an edge + a point
 func addTriangles(p *geom.Point, polygon geom.SegmentList, triangulation geom.TriangleList) geom.TriangleList {
 	for _, e := range polygon {
-		tri := geom.NewTriangle(e.X0, e.Y0, e.X1, e.Y1, p.X, p.Y)
+		tri := geom.NewTriangle(e.PointA.X, e.PointA.Y, e.PointB.X, e.PointB.Y, p.X, p.Y)
 		triangulation = append(triangulation, tri)
 	}
 	return triangulation

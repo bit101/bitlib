@@ -43,7 +43,7 @@ func (r *Rect) HitRect(s *Rect) bool {
 
 // HitSegment reports whether a line segment is interesecting this rectangle.
 func (r *Rect) HitSegment(s *Segment) bool {
-	return SegmentOnRect(s.X0, s.Y0, s.X1, s.Y1, r.X, r.Y, r.W, r.H)
+	return SegmentOnRect(s.PointA.X, s.PointA.Y, s.PointB.X, s.PointB.Y, r.X, r.Y, r.W, r.H)
 }
 
 // Scaled returns a new rectangle, a scaled version of this rectangle.
