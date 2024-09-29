@@ -156,18 +156,24 @@ func Clockwise(p1, p2, p3 *Point) bool {
 }
 
 // LinearBezierPoints creates a list of points roughly evenly distributed along the curve.
-func LinearBezierPoints(count float64, p0, p1, p2, p3 *Point) PointList {
+func LinearBezierPoints(count int, p0, p1, p2, p3 *Point) PointList {
+	// An extra point will be added on the end of the path, so we'll account for that.
+	count--
+	fCount := float64(count)
+	// Too few segments and the points will be approximated very innacurately.
+	// So, we'll make a minimum of 50 segments.
+	segCount := math.Max(fCount*2, 50)
 	path := NewPointList()
-	for i := 0.0; i <= count*2; i++ {
-		t := i / (count * 2)
+	for i := 0.0; i <= segCount; i++ {
+		t := i / segCount
 		p := BezierPoint(t, p0, p1, p2, p3)
 		path.Add(p)
 	}
 
 	points := NewPointList()
-	for i := 0.0; i <= count; i++ {
-		t := i / count
-		p, _ := path.Interpolate(t)
+	for i := 0.0; i <= fCount; i++ {
+		t := i / fCount
+		p := path.Interpolate(t)
 		points.Add(p)
 	}
 	return points
