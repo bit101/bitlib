@@ -155,6 +155,39 @@ func Clockwise(p1, p2, p3 *Point) bool {
 	return (p1.X-p3.X)*(p2.Y-p3.Y)-(p2.X-p3.X)*(p1.Y-p3.Y) > 0
 }
 
+// LinearBezierPoints creates a list of points roughly evenly distributed along the curve.
+func LinearBezierPoints(count float64, p0, p1, p2, p3 *Point) PointList {
+	path := NewPointList()
+	for i := 0.0; i <= count*2; i++ {
+		t := i / (count * 2)
+		p := BezierPoint(t, p0, p1, p2, p3)
+		path.Add(p)
+	}
+
+	points := NewPointList()
+	for i := 0.0; i <= count; i++ {
+		t := i / count
+		p, _ := path.Interpolate(t)
+		points.Add(p)
+	}
+	return points
+}
+
+// BezLength returns the length of a bezier curve.
+// count is how many segments the curve will be sliced into.
+// The higher the count, the more accurate. 1000 is a decent start.
+func BezLength(p0, p1, p2, p3 *Point, count float64) float64 {
+	dist := 0.0
+	pA := p0
+	for i := 1.0; i < count; i++ {
+		t := i / count
+		pB := BezierPoint(t, p0, p1, p2, p3)
+		dist += pA.Distance(pB)
+		pA = pB
+	}
+	return dist
+}
+
 //////////////////////////////
 // Transform in place
 //////////////////////////////
