@@ -123,6 +123,35 @@ func (p PointList) Length() float64 {
 	return total
 }
 
+// Interpolate returns a point interpolated along the length of this path.
+func (p PointList) Interpolate(t float64) (*Point, error) {
+	if t < 0 || t > 1 {
+		return nil, errors.New("t should be from 0.0 to 1.0")
+	}
+	if t == 0 {
+		return p.First(), nil
+	}
+	if t == 1 {
+		return p.Last(), nil
+	}
+	length := p.Length()
+	accumulated := 0.0
+	for i := range len(p) - 1 {
+		p0 := p[i]
+		p1 := p[i+1]
+		l := p0.Distance(p1)
+		if (accumulated+l)/length > t {
+			tmin := accumulated / length
+			tmax := (accumulated + l) / length
+			t = blmath.Norm(t, tmin, tmax)
+
+			return LerpPoint(t, p0, p1), nil
+		}
+		accumulated += l
+	}
+	return nil, errors.New("unable to interpolate")
+}
+
 // Get returns the point at the given index.
 // If the index is negative, it counts from the end of the list.
 func (p PointList) Get(index int) *Point {
