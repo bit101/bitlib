@@ -4,6 +4,11 @@ package geom
 import "github.com/bit101/bitlib/blmath"
 
 // BezierCurve represents a Bezier curve.
+// In addition to containing the control points of the curve,
+// it precalculates a segmented path that represents the curve as a series of points.
+// This can be used to linearly interpolate along the curve, to find points
+// or the slope of the curve at those positions.
+// Changing the segment count will recalculate the path.
 type BezierCurve struct {
 	P0, P1, P2, P3 *Point
 	path           PointList
@@ -55,6 +60,7 @@ func (b *BezierCurve) GetPath() PointList {
 
 // LinearPoints creates a list of points roughly evenly distributed along the curve.
 func (b *BezierCurve) LinearPoints(count int) PointList {
+	// An extra point will be added on the end of the path, so we'll account for that.
 	count--
 	fCount := float64(count)
 	path := NewPointList()
