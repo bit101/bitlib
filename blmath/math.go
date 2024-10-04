@@ -151,11 +151,32 @@ func LoopSin(t, min, max float64) float64 {
 	return Map(math.Cos(t*Tau), 1, -1, min, max)
 }
 
-// LoopSinMid maps a normal value to min and max values with a sine wave.
-// In this version the values will start from the midpoint of min and max,
-// go up to max, back to min and back to the midpoint.
-func LoopSinMid(t, min, max float64) float64 {
-	return Map(math.Cos((t+0.25)*Tau), 1, -1, min, max)
+// LoopCos is the same as LoopSin but out of phase.
+// In this version the values will go from the mid point, to max to min and back to mid as t goes from 0 to 1.
+// Yes, yes, LoopSin uses cos, and LoopCos uses sin. Deal with it.
+func LoopCos(t, min, max float64) float64 {
+	return Map(math.Sin(t*Tau), -1, 1, min, max)
+}
+
+// LoopTri maps a normal value to min and max values linearly.
+// In this version the values will go from min, to max and back as t goes from 0 to 1.
+// Similar to LoopSin, but moves at a constant speed.
+func LoopTri(t, min, max float64) float64 {
+	t = Wrap(t, 0, 1)
+	if t < 0.5 {
+		return Map(t, 0, 0.5, min, max)
+	}
+	return Map(t, 0.5, 1.0, max, min)
+}
+
+// LoopSquare maps a normal value to min and max values.
+// It alternates between the min and max, max for the first part of the cycle, then min.
+func LoopSquare(t, min, max float64) float64 {
+	t = Wrap(t, 0, 1)
+	if t < 0.5 {
+		return max
+	}
+	return min
 }
 
 // Equalish returns whether the two values are approximately equal.
