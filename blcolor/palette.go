@@ -3,6 +3,8 @@ package blcolor
 
 import (
 	"log"
+	"math"
+	"slices"
 	"sort"
 
 	"github.com/bit101/bitlib/random"
@@ -74,4 +76,25 @@ func (p *Palette) Swap(i, j int) {
 // Sort sorts the palette based on luminance
 func (p *Palette) Sort() {
 	sort.Sort(p)
+}
+
+// SortByHue sorts the palette colors based on their hue.
+func (p *Palette) SortByHue(offset float64) {
+	slices.SortFunc(p.colors, func(a, b Color) int {
+		ha, _, _ := a.ToHSV()
+		hb, _, _ := b.ToHSV()
+		ha += offset
+		hb += offset
+		ha = math.Mod(ha, 360)
+		hb = math.Mod(hb, 360)
+		if ha > hb {
+			return 1
+		}
+		return -1
+	})
+}
+
+// Reverse reverses the order of the colors in the palette.
+func (p *Palette) Reverse() {
+	slices.Reverse(p.colors)
 }
